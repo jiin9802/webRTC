@@ -11,6 +11,7 @@
 		F9EB2FB32694139F002F677A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EB2FB22694139F002F677A /* ContentView.swift */; };
 		F9EB2FB5269413A0002F677A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F9EB2FB4269413A0002F677A /* Assets.xcassets */; };
 		F9EB2FB8269413A0002F677A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F9EB2FB7269413A0002F677A /* Preview Assets.xcassets */; };
+		F9EB2FC0269444D0002F677A /* MyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EB2FBF269444D0002F677A /* MyTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		F9EB2FB4269413A0002F677A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F9EB2FB7269413A0002F677A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F9EB2FB9269413A0002F677A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F9EB2FBF269444D0002F677A /* MyTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +42,7 @@
 				F9EB2FAE2694139F002F677A /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		F9EB2FAE2694139F002F677A /* Products */ = {
 			isa = PBXGroup;
@@ -57,6 +60,7 @@
 				F9EB2FB4269413A0002F677A /* Assets.xcassets */,
 				F9EB2FB9269413A0002F677A /* Info.plist */,
 				F9EB2FB6269413A0002F677A /* Preview Content */,
+				F9EB2FBF269444D0002F677A /* MyTextView.swift */,
 			);
 			path = homework;
 			sourceTree = "<group>";
@@ -139,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9EB2FB32694139F002F677A /* ContentView.swift in Sources */,
+				F9EB2FC0269444D0002F677A /* MyTextView.swift in Sources */,
 				F9EB2FB12694139F002F677A /* homeworkApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,8 +272,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"homework/Preview Content\"";
+				DEVELOPMENT_TEAM = C5RAG6VXSW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = homework/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -276,8 +283,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sktelecom.homework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skt.prod.homework;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = 2021_itern_homework_dev;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -288,8 +296,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"homework/Preview Content\"";
+				DEVELOPMENT_TEAM = C5RAG6VXSW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = homework/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -297,8 +307,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sktelecom.homework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skt.prod.homework;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = 2021_itern_homework_dev;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
