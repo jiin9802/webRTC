@@ -29,8 +29,17 @@ int height = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(-103, 0, 600, 390)];
+    _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                        self.view.bounds.size.width / 2,
+                                                                        self.view.bounds.size.height / 2)];
     [self.view addSubview:_localView];
+    
+    //NOTE::이 시점에는 captureSession이 할당/생성되지 않아 1초뒤에 시도하도록 임시로 처리.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (AVCaptureConnection *connection in _localView.captureSession.connections) {
+            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        }
+    });
 
     NSURL *url = [[NSURL alloc] initWithString:@"wss://j2code.ml/websocket"];
     websocket = [[WebSocketChannel alloc] initWithURL: url]; //url설정, timer설정 등등 socket open
