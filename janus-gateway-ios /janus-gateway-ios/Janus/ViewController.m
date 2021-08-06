@@ -11,6 +11,10 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 
 @interface ViewController ()
 @property (strong, nonatomic) RTCCameraPreviewView *localView;
+@property (weak, nonatomic) IBOutlet RTCCameraPreviewView *local_view;
+@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *remoteView1;
+@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *remoteView2;
+@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *remoteView3;
 
 @end
 
@@ -22,6 +26,7 @@ RTCVideoTrack *localTrack;
 RTCAudioTrack *localAudioTrack;
 
 int height = 0;
+int participent=0;
 
 @synthesize factory = _factory;
 @synthesize localView = _localView;
@@ -29,17 +34,17 @@ int height = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                        self.view.bounds.size.width / 2,
-                                                                        self.view.bounds.size.height / 2)];
-    
+//    _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(0, 0,
+//                                                                        self.view.bounds.size.width / 2,
+//                                                                        self.view.bounds.size.height / 2)];
+//
     //NOTE::이 시점에는 captureSession이 할당/생성되지 않아 1초뒤에 시도하도록 임시로 처리.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        for (AVCaptureConnection *connection in _localView.captureSession.connections) {
+        for (AVCaptureConnection *connection in self.local_view.captureSession.connections) {
             connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
         }
     });
-    [self.view addSubview:_localView];
+    //[self.view addSubview:_localView];
 
     NSURL *url = [[NSURL alloc] initWithString:@"wss://18.223.76.233/websocket"];
     websocket = [[WebSocketChannel alloc] initWithURL: url]; //url설정, timer설정 등등 socket open
@@ -51,23 +56,23 @@ int height = 0;
     localAudioTrack = [self createLocalAudioTrack];
 }
 
-- (RTCEAGLVideoView *)createRemoteView {
-    height += 390;
-    
-    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width / 2, 0, self.view.bounds.size.width / 2,self.view.bounds.size.height / 2 )];
-    //remoteView.contentMode=UIViewContentModeScaleAspectFill;
-    //[remoteView renderFrame:nil];
-    remoteView.delegate = self;
-    //remoteView.contentMode=UIViewContentModeScaleAspectFit;
-    //remoteView.frame=AVMakeRectWithAspectRatioInsideRect(AVLayerVideoGravityResizeAspectFill, <#CGRect boundingRect#>)
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        for (AVCaptureConnection *connection in remoteView.captureSession.connections) {
-//            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-//        }
-//    });
-    [self.view addSubview:remoteView];
-    return remoteView;
-}
+//- (RTCEAGLVideoView *)createRemoteView {
+//    height += 390;
+//
+//    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width / 2, 0, self.view.bounds.size.width / 2,self.view.bounds.size.height / 2 )];
+//    //remoteView.contentMode=UIViewContentModeScaleAspectFill;
+//    //[remoteView renderFrame:nil];
+//    remoteView.delegate = self;
+//    //remoteView.contentMode=UIViewContentModeScaleAspectFit;
+//    //remoteView.frame=AVMakeRectWithAspectRatioInsideRect(AVLayerVideoGravityResizeAspectFill, <#CGRect boundingRect#>)
+////    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+////        for (AVCaptureConnection *connection in remoteView.captureSession.connections) {
+////            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+////        }
+////    });
+//    [self.view addSubview:remoteView];
+//    return remoteView;
+//}
 
 - (void)createPublisherPeerConnection {
     publisherPeerConnection = [self createPeerConnection];
@@ -158,7 +163,7 @@ int height = 0;
 
     RTCAVFoundationVideoSource *source = [_factory avFoundationVideoSourceWithConstraints:cameraConstraints];
     RTCVideoTrack *localVideoTrack = [_factory videoTrackWithSource:source trackId:kARDVideoTrackId];
-    _localView.captureSession = source.captureSession;
+    self.local_view.captureSession = source.captureSession;
 
     return localVideoTrack;
 }
@@ -195,7 +200,7 @@ int height = 0;
     CGRect rect = videoView.frame;
     rect.size = size;
     NSLog(@"========didChangeVideiSize %fx%f", size.width, size.height);
-    videoView.frame = rect;
+    //videoView.frame = rect;
 }
 
 
@@ -215,14 +220,36 @@ int height = 0;
         if (stream.videoTracks.count) {
             RTCVideoTrack *remoteVideoTrack = stream.videoTracks[0];
 
-            RTCEAGLVideoView *remoteView = [self createRemoteView];
+            switch (participent) {
+                case 0:
+                    [remoteVideoTrack addRenderer:self.remoteView1];
+                    janusConnection.videoView = self.remoteView1;
+                    participent++;
+
+                    break;
+                case 1:
+                    [remoteVideoTrack addRenderer:self.remoteView2];
+                    janusConnection.videoView = self.remoteView2;
+                    participent++;
+
+                    break;
+                case 2:
+                    [remoteVideoTrack addRenderer:self.remoteView3];
+                    janusConnection.videoView = self.remoteView3;
+                    participent++;
+
+                    break;
+                    
+                default:
+                    break;
+            }
+
+            //RTCEAGLVideoView *remoteView = [self createRemoteView];
             //[remoteView renderFrame:nil];
 
-            [remoteVideoTrack addRenderer:remoteView];
-            
+//            participent++;
 
             janusConnection.videoTrack = remoteVideoTrack;
-            janusConnection.videoView = remoteView;
         }
     });
 }
@@ -321,7 +348,7 @@ int height = 0;
     videoTrack = nil;
     [jc.videoView renderFrame:nil];
     [jc.videoView removeFromSuperview];
-
+    participent--;
     [peerConnectionDict removeObjectForKey:handleId];
 }
 

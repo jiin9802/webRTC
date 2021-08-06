@@ -18,8 +18,50 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z5v-DG-NcX" userLabel="View1" customClass="RTCCameraPreviewView">
+                                <rect key="frame" x="0.0" y="0.0" width="187.66666666666666" height="406"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G2z-jo-h45" userLabel="View2" customClass="RTCEAGLVideoView">
+                                <rect key="frame" x="187.66666666666663" y="0.0" width="187.33333333333337" height="406"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LWb-J2-c1z" userLabel="View3" customClass="RTCEAGLVideoView">
+                                <rect key="frame" x="0.0" y="406" width="187.66666666666666" height="406"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAT-q5-j4q" userLabel="View4" customClass="RTCEAGLVideoView">
+                                <rect key="frame" x="187.66666666666663" y="406" width="187.33333333333337" height="406"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="G2z-jo-h45" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="3oV-s5-3xO"/>
+                            <constraint firstAttribute="trailing" secondItem="VAT-q5-j4q" secondAttribute="trailing" id="4C8-HF-EqN"/>
+                            <constraint firstItem="LWb-J2-c1z" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="FyM-ZV-bZY"/>
+                            <constraint firstItem="z5v-DG-NcX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="KbF-aY-Fom"/>
+                            <constraint firstAttribute="centerX" secondItem="z5v-DG-NcX" secondAttribute="trailing" id="MLr-Gk-zPh"/>
+                            <constraint firstAttribute="centerY" secondItem="LWb-J2-c1z" secondAttribute="top" id="OdM-6E-tIQ"/>
+                            <constraint firstItem="G2z-jo-h45" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Pf4-UO-heK"/>
+                            <constraint firstAttribute="centerY" secondItem="G2z-jo-h45" secondAttribute="bottom" id="f4f-yw-z1v"/>
+                            <constraint firstAttribute="centerX" secondItem="LWb-J2-c1z" secondAttribute="trailing" id="i9t-Mj-4Bw"/>
+                            <constraint firstItem="VAT-q5-j4q" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tES-Gy-31Q"/>
+                            <constraint firstItem="z5v-DG-NcX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tT1-LY-U3Z"/>
+                            <constraint firstAttribute="bottom" secondItem="VAT-q5-j4q" secondAttribute="bottom" id="uOH-vM-KHw"/>
+                            <constraint firstAttribute="centerY" secondItem="z5v-DG-NcX" secondAttribute="bottom" id="vRn-jy-4Lg"/>
+                            <constraint firstAttribute="trailing" secondItem="G2z-jo-h45" secondAttribute="trailing" id="yya-Ai-MNe"/>
+                            <constraint firstItem="VAT-q5-j4q" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="zeX-xZ-4au"/>
+                            <constraint firstAttribute="bottom" secondItem="LWb-J2-c1z" secondAttribute="bottom" id="zo1-BB-ISa"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="local_view" destination="z5v-DG-NcX" id="onA-t9-V4P"/>
+                        <outlet property="remoteView1" destination="G2z-jo-h45" id="l33-ha-M27"/>
+                        <outlet property="remoteView2" destination="LWb-J2-c1z" id="sWT-FT-fTK"/>
+                        <outlet property="remoteView3" destination="VAT-q5-j4q" id="k69-tI-OnK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
