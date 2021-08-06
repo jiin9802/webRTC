@@ -32,7 +32,6 @@ int height = 0;
     _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(0, 0,
                                                                         self.view.bounds.size.width / 2,
                                                                         self.view.bounds.size.height / 2)];
-    [self.view addSubview:_localView];
     
     //NOTE::이 시점에는 captureSession이 할당/생성되지 않아 1초뒤에 시도하도록 임시로 처리.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -40,8 +39,9 @@ int height = 0;
             connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
         }
     });
+    [self.view addSubview:_localView];
 
-    NSURL *url = [[NSURL alloc] initWithString:@"wss://j2code.ml/websocket"];
+    NSURL *url = [[NSURL alloc] initWithString:@"wss://18.223.76.233/websocket"];
     websocket = [[WebSocketChannel alloc] initWithURL: url]; //url설정, timer설정 등등 socket open
     websocket.delegate = self;
 
@@ -53,8 +53,18 @@ int height = 0;
 
 - (RTCEAGLVideoView *)createRemoteView {
     height += 390;
-    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectMake(0, height, 480, 360)];
+    
+    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width / 2, 0, self.view.bounds.size.width / 2,self.view.bounds.size.height / 2 )];
+    //remoteView.contentMode=UIViewContentModeScaleAspectFill;
+    //[remoteView renderFrame:nil];
     remoteView.delegate = self;
+    //remoteView.contentMode=UIViewContentModeScaleAspectFit;
+    //remoteView.frame=AVMakeRectWithAspectRatioInsideRect(AVLayerVideoGravityResizeAspectFill, <#CGRect boundingRect#>)
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        for (AVCaptureConnection *connection in remoteView.captureSession.connections) {
+//            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+//        }
+//    });
     [self.view addSubview:remoteView];
     return remoteView;
 }
@@ -72,10 +82,10 @@ int height = 0;
 }
 
 - (RTCIceServer *)defaultSTUNServer {
-    NSArray *array = [NSArray arrayWithObject:@"turn:18.223.76.233:3478"];
+    NSArray *array = [NSArray arrayWithObject:@"turn:101.101.208.163:3478"];
     return [[RTCIceServer alloc] initWithURLStrings:array
-                                           username:@"jiin"
-                                         credential:@"commmedia"];
+                                           username:@"myuser"
+                                         credential:@"1234"];
 }
 
 - (RTCPeerConnection *)createPeerConnection {
@@ -166,8 +176,8 @@ int height = 0;
 - (nullable NSDictionary *)currentMediaConstraint {
     NSDictionary *mediaConstraintsDictionary = nil;
 
-    NSString *widthConstraint = @"480";
-    NSString *heightConstraint = @"360";
+    NSString *widthConstraint = @"480"; //카메라 해상도 480x360줬을 때 크기가 딱 맞으면 화질 좋고, 안 맞으면 줄여서 좀 덜 보이고 이럼.
+    NSString *heightConstraint = @"360";//안보이는 건 그 해상도 지원 안해서 그런거임
     NSString *frameRateConstrait = @"20";
     if (widthConstraint && heightConstraint) {
         mediaConstraintsDictionary = @{
@@ -206,7 +216,11 @@ int height = 0;
             RTCVideoTrack *remoteVideoTrack = stream.videoTracks[0];
 
             RTCEAGLVideoView *remoteView = [self createRemoteView];
+            //[remoteView renderFrame:nil];
+
             [remoteVideoTrack addRenderer:remoteView];
+            
+
             janusConnection.videoTrack = remoteVideoTrack;
             janusConnection.videoView = remoteView;
         }
