@@ -21,9 +21,11 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @implementation ViewController
 WebSocketChannel *websocket;
 NSMutableDictionary *peerConnectionDict;
-NSMutableDictionary *remoteViewDict;
+NSMutableArray *peerConnectionArray;
+NSArray *resultArray;
 NSMutableArray *view;
 NSMutableArray *view_arr;
+
 
 RTCPeerConnection *publisherPeerConnection;
 RTCVideoTrack *localTrack;
@@ -37,7 +39,7 @@ int participent=0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    remoteViewDict=[[NSMutableDictionary alloc] init];
+    peerConnectionArray=[[NSMutableArray alloc] init];
     view=[NSMutableArray arrayWithCapacity:3];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
@@ -45,22 +47,14 @@ int participent=0;
     [view_arr insertObject:self.remoteView2 atIndex:1];
     [view_arr insertObject:self.remoteView3 atIndex:2];
 
-   // [view addObject:[NSNumber nu]]
-    [view addObject:[NSNumber numberWithInteger:false]];
-    [view addObject:[NSNumber numberWithBool:false]];
-    [view addObject:[NSNumber numberWithBool:false]];
 
-   // remoteViewDict setObject:[NSNumber numberWithInt:<#(int)#>] forKey:<#(nonnull id<NSCopying>)#>
-//    _localView = [[RTCCameraPreviewView alloc] initWithFrame:CGRectMake(0, 0,
-//                                                                        self.view.bounds.size.width / 2,
-//                                                                        self.view.bounds.size.height / 2)];
-//
+   
     //NOTE::이 시점에는 captureSession이 할당/생성되지 않아 1초뒤에 시도하도록 임시로 처리.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        for (AVCaptureConnection *connection in self.local_view.captureSession.connections) {
-            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-        }
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        for (AVCaptureConnection *connection in self.local_view.captureSession.connections) {
+//            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+//        }
+//    });
     //[self.view addSubview:_localView];
 
     NSURL *url = [[NSURL alloc] initWithString:@"wss://18.223.76.233/websocket"];
@@ -72,33 +66,48 @@ int participent=0;
     localTrack = [self createLocalVideoTrack];
     localAudioTrack = [self createLocalAudioTrack];
 }
-
+-(void)arrangeRemoteView{
+    NSInteger i=0;
+    for(JanusConnection *peerConnection in peerConnectionArray)
+    {
+        
+        RTCEAGLVideoView *remote_View =peerConnection.videoView;
+        [view_arr[i] addSubview:remote_View];
+               
+        remote_View.translatesAutoresizingMaskIntoConstraints=NO;
+        
+        NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
+        NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
+        NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
+        NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
+        [view_arr[i] addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
+        i++;
+        
+    }
+}
 - (RTCEAGLVideoView *)createRemoteView {
     NSInteger index;
-    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectMake(0, 0, 0,0)];
+    RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] init];
     //remoteView.contentMode=UIViewContentModeScaleAspectFill;
     //[remoteView renderFrame:nil];
     remoteView.delegate = self;
-    
-    [self.view addSubview:remoteView];
-    
-    for (NSInteger i=0;i<[view count];i++){
-        if([view[i] integerValue]==0)
-        {
-            index=i;
-            break;
-        }
-    }
-    
-    NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:view_arr[index] attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
-    NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view_arr[index] attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
-    NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view_arr[index] attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
-    NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:view_arr[index] attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
-    [remoteView addConstraint:constraint1];
-    [remoteView addConstraint:constraint2];
-    [remoteView addConstraint:constraint3];
-    [remoteView addConstraint:constraint4];
-    
+//    for (NSInteger i=0;i<[view count];i++){
+//        if([view[i] integerValue]==0)
+//        {
+//            index=i;
+//            break;
+//        }
+//    }
+//    [self.remoteView1 addSubview:remoteView];
+//
+//    remoteView.translatesAutoresizingMaskIntoConstraints=NO;
+//
+//    NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
+//    [self.remoteView1 addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
+//
 
     return remoteView;
 }
@@ -243,6 +252,9 @@ int participent=0;
             break;
         }
     }
+    //peerConnectionArray=[peerConnectionDict allValues];
+    //NSLog(@"%@", [peerConnectionArray[0] objectAtIndex:0]);
+    
     NSLog(@"===========handleid:%ld",(long)[janusConnection.handleId integerValue]);
 //    NSLog(@"===========view[0]:%d",view[0]);
 //
@@ -250,13 +262,7 @@ int participent=0;
 //
 //    NSLog(@"===========view[0]:%d",[[view objectAtIndex:0] integerValue]);
 //
-    for (NSInteger i=0;i<[view count];i++){
-        if([view[i] integerValue]==0)
-        {
-            view[i]=janusConnection.handleId;
-            break;
-        }
-    }
+
     //[remoteViewDict setObject:janusConnection.handleId forKey:index];
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -266,6 +272,8 @@ int participent=0;
             [remoteVideoTrack addRenderer:remoteView];
             janusConnection.videoTrack = remoteVideoTrack;
             janusConnection.videoView=remoteView;
+            [peerConnectionArray addObject:janusConnection];
+            [self arrangeRemoteView];
             //janusConnection.videoView.contentMode=UIViewContentModeScaleAspectFit;
         }
     });
@@ -363,6 +371,11 @@ int participent=0;
 
 - (void)onLeaving:(NSNumber *)handleId {
     JanusConnection *jc = peerConnectionDict[handleId];
+    
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"handleId == %@",jc.handleId];
+    
+    resultArray=[peerConnectionArray filteredArrayUsingPredicate:predicate];
+    [peerConnectionArray removeObjectsInArray:resultArray];
     [jc.connection close];
     jc.connection = nil;
     RTCVideoTrack *videoTrack = jc.videoTrack;
@@ -370,27 +383,14 @@ int participent=0;
     videoTrack = nil;
     [jc.videoView renderFrame:nil];
     //jc.videoView=nil;
-   // [jc.videoView removeFromSuperview];
-    for (int i=0;i<[view count];++i){
-        if((long)[view[i] integerValue]==(long)[jc.handleId integerValue])
-        {
-            [view replaceObjectAtIndex:i withObject:[NSNumber numberWithBool:false]];
-            //[self.remoteView1 removeFromSuperview];
-            //self.local_view.contentMode=UIViewContentModeScaleAspectFill;
-
-            // view[i]=0;
-           // [view insertObject:[NSNumber numberWithBool:false] atIndex:i];
-            
-            break;
-        }
-    }
-    //participent--;
-    //NSLog(@"============%@",@(participent).stringValue);
+    [jc.videoView removeFromSuperview];
+    
     [peerConnectionDict removeObjectForKey:handleId];
-    for(NSInteger i=0; i<[view count];i++){
-        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
-        
-    }
+    [self arrangeRemoteView];
+//    for(NSInteger i=0; i<[view count];i++){
+//        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
+//
+//    }
 }
 
 @end
