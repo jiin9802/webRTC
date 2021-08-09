@@ -23,15 +23,15 @@
                                 <rect key="frame" x="0.0" y="0.0" width="187.66666666666666" height="406"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G2z-jo-h45" userLabel="View2" customClass="RTCEAGLVideoView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G2z-jo-h45" userLabel="View2">
                                 <rect key="frame" x="187.66666666666663" y="0.0" width="187.33333333333337" height="406"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LWb-J2-c1z" userLabel="View3" customClass="RTCEAGLVideoView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LWb-J2-c1z" userLabel="View3">
                                 <rect key="frame" x="0.0" y="406" width="187.66666666666666" height="406"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAT-q5-j4q" userLabel="View4" customClass="RTCEAGLVideoView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAT-q5-j4q" userLabel="View4">
                                 <rect key="frame" x="187.66666666666663" y="406" width="187.33333333333337" height="406"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
