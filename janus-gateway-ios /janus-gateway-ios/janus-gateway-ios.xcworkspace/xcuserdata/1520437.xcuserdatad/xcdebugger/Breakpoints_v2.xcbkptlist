@@ -14,8 +14,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "373"
-            endingLineNumber = "373"
+            startingLineNumber = "382"
+            endingLineNumber = "382"
             landmarkName = "-onLeaving:"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "258"
-            endingLineNumber = "258"
+            startingLineNumber = "267"
+            endingLineNumber = "267"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -94,24 +94,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "388"
-            endingLineNumber = "388"
-            landmarkName = "-onLeaving:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7BB85D3A-C382-4BC5-8F34-BAC2DDEA0884"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Janus/ViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "390"
-            endingLineNumber = "390"
+            startingLineNumber = "403"
+            endingLineNumber = "403"
             landmarkName = "-onLeaving:"
             landmarkType = "7">
          </BreakpointContent>
@@ -126,8 +110,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "375"
-            endingLineNumber = "375"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
             landmarkName = "-onLeaving:"
             landmarkType = "7">
          </BreakpointContent>
@@ -142,8 +126,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
+            startingLineNumber = "394"
+            endingLineNumber = "394"
             landmarkName = "-onLeaving:"
             landmarkType = "7">
          </BreakpointContent>
@@ -153,6 +137,22 @@
          <BreakpointContent
             uuid = "0E85B847-394F-48F7-B943-96E271C1B812"
             shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Janus/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "411"
+            endingLineNumber = "411"
+            landmarkName = "ViewController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9DB6B2AC-3FA7-4A2F-8649-35B569484603"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Janus/ViewController.m"

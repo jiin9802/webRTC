@@ -68,18 +68,27 @@ int participent=0;
 }
 -(void)arrangeRemoteView{
     NSInteger i=0;
+    
     for(JanusConnection *peerConnection in peerConnectionArray)
     {
-        
+        if(i>[view_arr count]) //3개의 뷰만 constraint로 표현될 수 있게 peerconnectionarray에 있는 다른 것들은 표시 안되게, for(view_arr수만큼)대신한 문장
+        {
+            break;
+        }
+        if([[view_arr[i] subviews]containsObject:peerConnection.videoView])
+        {
+            //[[view_arr[i]subviews] remove]
+        }
         RTCEAGLVideoView *remote_View =peerConnection.videoView;
         [view_arr[i] addSubview:remote_View];
-               
+       // [view_arr[i] subviews]
         remote_View.translatesAutoresizingMaskIntoConstraints=NO;
         
         NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
         NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
         NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
         NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:remote_View attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:view_arr[i] attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
+       
         [view_arr[i] addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
         i++;
         
@@ -371,10 +380,16 @@ int participent=0;
 
 - (void)onLeaving:(NSNumber *)handleId {
     JanusConnection *jc = peerConnectionDict[handleId];
-    
+    NSInteger p;
     NSPredicate *predicate=[NSPredicate predicateWithFormat:@"handleId == %@",jc.handleId];
-    
     resultArray=[peerConnectionArray filteredArrayUsingPredicate:predicate];
+    for(JanusConnection *peerConnection in peerConnectionArray)
+    {
+        if(peerConnection==resultArray[0])
+        {
+            p=[peerConnectionArray indexOfObject:peerConnection];
+        }
+    }
     [peerConnectionArray removeObjectsInArray:resultArray];
     [jc.connection close];
     jc.connection = nil;
@@ -386,7 +401,10 @@ int participent=0;
     [jc.videoView removeFromSuperview];
     
     [peerConnectionDict removeObjectForKey:handleId];
-    [self arrangeRemoteView];
+    if(p<=[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
+    {
+        [self arrangeRemoteView];
+    }
 //    for(NSInteger i=0; i<[view count];i++){
 //        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
 //
