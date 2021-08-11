@@ -40,7 +40,6 @@ int participent=0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     peerConnectionArray=[[NSMutableArray alloc] init];
-    view=[NSMutableArray arrayWithCapacity:3];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
     [view_arr insertObject:self.remoteView1 atIndex:0];
@@ -75,10 +74,8 @@ int participent=0;
         {
             break;
         }
-        if([[view_arr[i] subviews]containsObject:peerConnection.videoView])
-        {
-            //[[view_arr[i]subviews] remove]
-        }
+        
+        
         RTCEAGLVideoView *remote_View =peerConnection.videoView;
         [view_arr[i] addSubview:remote_View];
        // [view_arr[i] subviews]
@@ -403,6 +400,13 @@ int participent=0;
     [peerConnectionDict removeObjectForKey:handleId];
     if(p<=[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
     {
+        for(NSInteger i=0; i<[view_arr count];i++){
+            for(UIView *v in [view_arr[i] subviews])
+            {
+                [v removeFromSuperview];
+                //[[view_arr[i] subviews] removeFromSuperview];
+            }
+        }
         [self arrangeRemoteView];
     }
 //    for(NSInteger i=0; i<[view count];i++){
