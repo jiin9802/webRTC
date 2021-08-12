@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "WebSocketChannel.h"
 #import "WebRTC/WebRTC.h"
-
+@import Accelerate;
 
 @protocol WebSocketDelegate <NSObject>
 - (void)onPublisherJoined:(NSNumber *)handleId;

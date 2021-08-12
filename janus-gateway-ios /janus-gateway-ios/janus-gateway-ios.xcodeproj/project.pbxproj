@@ -56,6 +56,10 @@
 		B0EDAAEFD9A7DD4C14599CFA /* libPods-Janus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Janus.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10966B05AAC6A5B5314B7E0 /* Pods-janus-gateway-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-janus-gateway-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios.release.xcconfig"; sourceTree = "<group>"; };
 		DBB9CB144A52379C61B832DF /* libPods-janus-gateway-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-janus-gateway-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9CFC26726C3C8AB000A2B24 /* VideoCaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoCaptureController.h; sourceTree = "<group>"; };
+		F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoCaptureController.m; sourceTree = "<group>"; };
+		F9CFC26926C3CCEF000A2B24 /* CaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaptureController.m; sourceTree = "<group>"; };
+		F9CFC26A26C3CCFE000A2B24 /* CaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaptureController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,10 @@
 				27078DA71E1C0D0C002199B5 /* RTCSessionDescription+JSON.m */,
 				27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */,
 				27078DA31E1BC8D0002199B5 /* WebSocketChannel.h */,
+				F9CFC26A26C3CCFE000A2B24 /* CaptureController.h */,
+				F9CFC26926C3CCEF000A2B24 /* CaptureController.m */,
+				F9CFC26726C3C8AB000A2B24 /* VideoCaptureController.h */,
+				F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */,
 				279F89961E1BBECE00B651E7 /* AppDelegate.h */,
 				279F89971E1BBECE00B651E7 /* AppDelegate.m */,
 				279F89991E1BBECE00B651E7 /* ViewController.h */,

@@ -1,7 +1,9 @@
 
 #import "ViewController.h"
+#import "VideoCaptureController.h"
 #import "WebSocketChannel.h"
 #import "WebRTC/WebRTC.h"
+#import "WebRTC/RTCCameraVideoCapturer.h"
 #import "RTCSessionDescription+JSON.h"
 #import "JanusConnection.h"
 
@@ -9,9 +11,10 @@ static NSString * const kARDMediaStreamId = @"ARDAMS";
 static NSString * const kARDAudioTrackId = @"ARDAMSa0";
 static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 
-@interface ViewController ()
+@interface ViewController () <RTCVideoCapturerDelegate>
 //@property (strong, nonatomic) RTCCameraPreviewView *localView;
-@property (weak, nonatomic) IBOutlet RTCCameraPreviewView *local_view;
+//rtccamerapreviewview->uiview
+@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *local_view;
 @property (weak, nonatomic) IBOutlet UIView *remoteView1;
 @property (weak, nonatomic) IBOutlet UIView *remoteView2;
 @property (weak, nonatomic) IBOutlet UIView *remoteView3;
@@ -19,6 +22,8 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @end
 
 @implementation ViewController
+RTCEAGLVideoView *image_view;
+RTCCameraVideoCapturer * videoCapturer;
 WebSocketChannel *websocket;
 NSMutableDictionary *peerConnectionDict;
 NSMutableArray *peerConnectionArray;
@@ -39,6 +44,8 @@ int participent=0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    image_view=[[RTCEAGLVideoView alloc]init];
+
     peerConnectionArray=[[NSMutableArray alloc] init];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
@@ -54,8 +61,28 @@ int participent=0;
 //            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
 //        }
 //    });
-    //[self.view addSubview:_localView];
-
+    videoCapturer=[[RTCCameraVideoCapturer alloc]initWithDelegate:self];
+    NSArray *device=[RTCCameraVideoCapturer captureDevices];
+//    for(int i=0;i<[device count];i++)
+//    {
+//        //if([device[i] position]==2) break;
+//    }
+    NSArray *format=[RTCCameraVideoCapturer supportedFormatsForDevice:device[1]];
+    //AVCaptureDeviceFormat *format=videoCapturer.
+    AVCaptureDevicePosition position=AVCaptureDevicePositionFront;
+    [videoCapturer startCaptureWithDevice:device[1]
+                                   format:format[0] fps:24];
+    
+//    [self.local_view addSubview:videoCapturer];
+//    //videoCapturer.translatesAutoresizingMaskIntoConstraints=NO;
+//
+//
+//    NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:videoCapturer attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:videoCapturer attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:videoCapturer attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:videoCapturer attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
+//
+//    [self.local_view addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
     NSURL *url = [[NSURL alloc] initWithString:@"wss://18.223.76.233/websocket"];
     websocket = [[WebSocketChannel alloc] initWithURL: url]; //url설정, timer설정 등등 socket open
     websocket.delegate = self;
@@ -97,23 +124,6 @@ int participent=0;
     //remoteView.contentMode=UIViewContentModeScaleAspectFill;
     //[remoteView renderFrame:nil];
     remoteView.delegate = self;
-//    for (NSInteger i=0;i<[view count];i++){
-//        if([view[i] integerValue]==0)
-//        {
-//            index=i;
-//            break;
-//        }
-//    }
-//    [self.remoteView1 addSubview:remoteView];
-//
-//    remoteView.translatesAutoresizingMaskIntoConstraints=NO;
-//
-//    NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
-//    NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
-//    NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
-//    NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:remoteView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.remoteView1 attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
-//    [self.remoteView1 addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
-//
 
     return remoteView;
 }
@@ -183,13 +193,14 @@ int participent=0;
 }
 
 - (RTCAudioTrack *)createLocalAudioTrack {
-
+    
     RTCMediaConstraints *constraints = [self defaultMediaAudioConstraints];
     RTCAudioSource *source = [_factory audioSourceWithConstraints:constraints];
     RTCAudioTrack *track = [_factory audioTrackWithSource:source trackId:kARDAudioTrackId];
 
     return track;
 }
+//RTCCameraVideoCapturer
 
 - (RTCRtpSender *)createAudioSender:(RTCPeerConnection *)peerConnection {
     RTCRtpSender *sender = [peerConnection senderWithKind:kRTCMediaStreamTrackKindAudio streamId:kARDMediaStreamId];
@@ -200,13 +211,23 @@ int participent=0;
 }
 
 - (RTCVideoTrack *)createLocalVideoTrack {
+   // RTCVideoSource *videoSource=[self.factory videoSource];
+    
+    
     RTCMediaConstraints *cameraConstraints = [[RTCMediaConstraints alloc]
                                               initWithMandatoryConstraints:[self currentMediaConstraint]
                                               optionalConstraints: nil];
-
+    
     RTCAVFoundationVideoSource *source = [_factory avFoundationVideoSourceWithConstraints:cameraConstraints];
     RTCVideoTrack *localVideoTrack = [_factory videoTrackWithSource:source trackId:kARDVideoTrackId];
-    self.local_view.captureSession = source.captureSession;
+
+    
+   // VideoCaptureController *videoCaptureController=[[VideoCaptureController alloc]initWithCapturer:videoCapturer andConstraints:cameraConstraints];
+   // localVideoTrack.
+    
+   // self.local_view.captureSession = videoCapturer.captureSession;
+    //[videoCapturer delegate];
+    //videoCapturer.delegate = self;
 
     return localVideoTrack;
 }
@@ -409,10 +430,44 @@ int participent=0;
         }
         [self arrangeRemoteView];
     }
+    
 //    for(NSInteger i=0; i<[view count];i++){
 //        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
 //
 //    }
 }
-
+-(vImage_CGImageFormat)getImage {
+    vImage_CGImageFormat format;
+    format.bitsPerComponent=8;
+    format.bitsPerPixel=32;
+    format.colorSpace=nil;
+ //   format.bitmapInfo=
+    format.version=0;
+    format.decode=nil;
+    format.renderingIntent=0;
+    
+    return format;
+}
+#pragma mark - RTCVideoCaptureDelegate
+//capture될때마다 delegate호출되어서 밑에 함수 실행:view에 rendering
+-(void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame
+{
+    UIImage *cgImage;
+    [self.local_view renderFrame:frame];
+//    [self.local_view addSubview:image_view];
+//    NSLayoutConstraint *constraint1=[NSLayoutConstraint constraintWithItem:image_view attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeLeading multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint2=[NSLayoutConstraint constraintWithItem:image_view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual
+//        toItem:self.local_view attribute:NSLayoutAttributeTop multiplier:1.0f
+//        constant:0.0f];
+//    NSLayoutConstraint *constraint3=[NSLayoutConstraint constraintWithItem:image_view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
+//    NSLayoutConstraint *constraint4=[NSLayoutConstraint constraintWithItem:image_view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.local_view attribute:NSLayoutAttributeTrailing multiplier:1.0f constant:0.0f];
+//
+//    [self.local_view addConstraints:@[constraint1,constraint2,constraint3,constraint4]];
+    //vImage_CGImageFormat format=(vImage_CGImageFormat){
+        
+    
+    //vImageCreateCGImageFromBuffer(frame.buffer, <#const vImage_CGImageFormat *format#>, <#void (*callback)(void *, void *)#>, <#void *userData#>, <#vImage_Flags flags#>, <#vImage_Error *error#>)
+    
+    //frame의 pixelbuffer를 rendering해서 uiview에 그리기
+}
 @end
