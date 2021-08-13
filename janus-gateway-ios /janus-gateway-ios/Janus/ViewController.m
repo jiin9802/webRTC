@@ -256,7 +256,9 @@ int participent=0;
         if (stream.videoTracks.count) {
             RTCVideoTrack *remoteVideoTrack = stream.videoTracks[0];
             RTCEAGLVideoView *remoteView=[self createRemoteView];
-            [remoteVideoTrack addRenderer:remoteView];
+//            [remoteVideoTrack addRenderer:remoteView];
+            MyRemoteRenderer *remoteRenderer = [[MyRemoteRenderer alloc] initWithDelegate:self];
+            [remoteVideoTrack addRenderer:remoteRenderer];
             janusConnection.videoTrack = remoteVideoTrack;
             janusConnection.videoView=remoteView;
             [peerConnectionArray addObject:janusConnection];
@@ -402,4 +404,15 @@ int participent=0;
     NSLog(@"========didcapturevideoframe 호출됨");
 
 }
+
+#pragma mark - MyRemoteRendererDelegate
+- (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
+    //myRenderer가 토스해주는 frame을 받음.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (RTCEAGLVideoView *view in self.remoteView1.subviews) {
+            [view renderFrame:frame];
+        }
+    });
+}
+
 @end

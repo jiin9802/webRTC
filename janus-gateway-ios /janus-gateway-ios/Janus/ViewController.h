@@ -1,6 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "WebSocketChannel.h"
 #import "WebRTC/WebRTC.h"
+#import "MyRemoteRenderer.h"
+
+
 @import Accelerate;
 
 @protocol WebSocketDelegate <NSObject>
@@ -11,9 +14,11 @@
 @end
 
 
-@interface ViewController : UIViewController<RTCPeerConnectionDelegate, WebSocketDelegate, RTCEAGLVideoViewDelegate>
+@interface ViewController : UIViewController<RTCPeerConnectionDelegate, WebSocketDelegate, RTCEAGLVideoViewDelegate, MyRemoteRendererDelegate>
 
 @property(nonatomic, strong) RTCPeerConnectionFactory *factory;
+
+- (void)renderFrame:(RTCVideoFrame*)frame;
 
 @end
 

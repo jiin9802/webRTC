@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1B68AE20884D179BD06D1F20 /* libPods-janus-gateway-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB9CB144A52379C61B832DF /* libPods-janus-gateway-ios.a */; };
+		1E20E52D26C650F40086664F /* MyRemoteRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E20E52C26C650F40086664F /* MyRemoteRenderer.m */; };
 		27078DA41E1BC8D0002199B5 /* WebSocketChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */; };
 		27078DA81E1C0D0C002199B5 /* RTCSessionDescription+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DA71E1C0D0C002199B5 /* RTCSessionDescription+JSON.m */; };
 		27078DB91E1E10DB002199B5 /* JanusHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DB81E1E10DB002199B5 /* JanusHandle.m */; };
@@ -24,6 +25,8 @@
 /* Begin PBXFileReference section */
 		0113F09BBDF970E793971334 /* Pods-Janus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Janus.release.xcconfig"; path = "Pods/Target Support Files/Pods-Janus/Pods-Janus.release.xcconfig"; sourceTree = "<group>"; };
 		0F29BBA87E5964CEE3CB5EC7 /* Pods-janus-gateway-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-janus-gateway-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios.debug.xcconfig"; sourceTree = "<group>"; };
+		1E20E52B26C650F40086664F /* MyRemoteRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyRemoteRenderer.h; sourceTree = "<group>"; };
+		1E20E52C26C650F40086664F /* MyRemoteRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyRemoteRenderer.m; sourceTree = "<group>"; };
 		27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocketChannel.m; sourceTree = "<group>"; };
 		27078DA31E1BC8D0002199B5 /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannel.h; sourceTree = "<group>"; };
 		27078DA61E1C0D0C002199B5 /* RTCSessionDescription+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCSessionDescription+JSON.h"; sourceTree = "<group>"; };
@@ -130,6 +133,8 @@
 				279F89A41E1BBECE00B651E7 /* Info.plist */,
 				279F89AA1E1BBFD300B651E7 /* WebRTC.framework */,
 				279F89931E1BBECE00B651E7 /* Supporting Files */,
+				1E20E52B26C650F40086664F /* MyRemoteRenderer.h */,
+				1E20E52C26C650F40086664F /* MyRemoteRenderer.m */,
 			);
 			path = Janus;
 			sourceTree = "<group>";
@@ -282,6 +287,7 @@
 				27078DA81E1C0D0C002199B5 /* RTCSessionDescription+JSON.m in Sources */,
 				27078DA41E1BC8D0002199B5 /* WebSocketChannel.m in Sources */,
 				27078DB91E1E10DB002199B5 /* JanusHandle.m in Sources */,
+				1E20E52D26C650F40086664F /* MyRemoteRenderer.m in Sources */,
 				27078DC21E1E3E3E002199B5 /* JanusConnection.m in Sources */,
 				279F89981E1BBECE00B651E7 /* AppDelegate.m in Sources */,
 				279F89951E1BBECE00B651E7 /* main.m in Sources */,
