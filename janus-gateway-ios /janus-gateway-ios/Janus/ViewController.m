@@ -266,10 +266,10 @@ int participent=0;
             //janusConnection.videoView.contentMode=UIViewContentModeScaleAspectFit;
         }
     });
-    for(NSInteger i=0; i<[view count];i++){
-        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
-        //NSLog(@"type:",[view[i] class]);
-    }
+//    for(NSInteger i=0; i<[view count];i++){
+//        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
+//        //NSLog(@"type:",[view[i] class]);
+//    }
 }
 
 
@@ -408,9 +408,11 @@ int participent=0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        for (RTCEAGLVideoView *view in self.remoteView1.subviews) {
-            [view renderFrame:frame];
+    dispatch_async(dispatch_get_main_queue(), ^{//작업이 오래 걸리는 걸 백그라운드에서 실행시키기 위해
+        for (int i=0;i<[view_arr count];i++){
+            for (RTCEAGLVideoView *view in [view_arr[i] subviews]) {
+                [view renderFrame:frame];
+            }
         }
     });
 }
