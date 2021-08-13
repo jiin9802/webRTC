@@ -85,7 +85,7 @@ int participent=0;
     
     for(JanusConnection *peerConnection in peerConnectionArray)
     {
-        if(i>[view_arr count]) //3개의 뷰만 constraint로 표현될 수 있게 peerconnectionarray에 있는 다른 것들은 표시 안되게, for(view_arr수만큼)대신한 문장
+        if(i>=[view_arr count]) //3개의 뷰만 constraint로 표현될 수 있게 peerconnectionarray에 있는 다른 것들은 표시 안되게, for(view_arr수만큼)대신한 문장
         {
             break;
         }
@@ -380,7 +380,7 @@ int participent=0;
     [jc.videoView removeFromSuperview];
     
     [peerConnectionDict removeObjectForKey:handleId];
-    if(p<=[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
+    if(p<[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
     {
         for(NSInteger i=0; i<[view_arr count];i++){
             for(UIView *v in [view_arr[i] subviews])
