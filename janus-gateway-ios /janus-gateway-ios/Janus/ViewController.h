@@ -3,7 +3,8 @@
 #import "WebRTC/WebRTC.h"
 #import "MyRemoteRenderer.h"
 
-
+@import Vision;
+@import CoreML;
 @import Accelerate;
 
 @protocol WebSocketDelegate <NSObject>
