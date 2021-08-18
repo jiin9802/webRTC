@@ -1,14 +1,14 @@
 
 #import "ViewController.h"
-#import "VideoCaptureController.h"
 #import "WebSocketChannel.h"
-#import "WebRTC/WebRTC.h"
-#import "WebRTC/RTCCameraVideoCapturer.h"
+#import <WebRTC/WebRTC.h>
 #import "RTCSessionDescription+JSON.h"
 #import "JanusConnection.h"
 #import <Vision/Vision.h>
 #import <CoreML/CoreML.h>
 #import "DeepLabV3.h"
+#import "DeepLabV3FP16.h"
+#import "DeepLabV3Int8LUT.h"
 
 
 static NSString * const kARDMediaStreamId = @"ARDAMS";
@@ -18,7 +18,7 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @interface ViewController () <RTCVideoCapturerDelegate>
 //@property (strong, nonatomic) RTCCameraPreviewView *localView;
 //rtccamerapreviewview->uiview
-@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *local_view;
+@property (weak, nonatomic) IBOutlet RTCMTLVideoView *local_view;
 @property (weak, nonatomic) IBOutlet UIView *remoteView1;
 @property (weak, nonatomic) IBOutlet UIView *remoteView2;
 @property (weak, nonatomic) IBOutlet UIView *remoteView3;
@@ -26,6 +26,7 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @end
 
 @implementation ViewController
+
 RTCEAGLVideoView *image_view;
 RTCCameraVideoCapturer * videoCapturer;
 WebSocketChannel *websocket;
@@ -34,12 +35,11 @@ NSMutableArray *peerConnectionArray;
 NSArray *resultArray;
 NSMutableArray *view_arr;
 VNCoreMLModel *coremodel;
-DeepLabV3 *model;
+DeepLabV3FP16 *model;
 VNCoreMLRequest *coreMLRequest;
 VNImageRequestHandler *img_handler;
-VNPixelBufferObservation *observation;
-RTCVideoFrame * newFrame;
-
+RTCVideoFrame *newFrame;
+MLMultiArray *inferenceResult;
 
 RTCPeerConnection *publisherPeerConnection;
 RTCVideoTrack *localTrack;
@@ -60,34 +60,31 @@ int height = 0;
     [view_arr insertObject:self.remoteView1 atIndex:0];
     [view_arr insertObject:self.remoteView2 atIndex:1];
     [view_arr insertObject:self.remoteView3 atIndex:2];
-    
-    observation=[[VNPixelBufferObservation alloc]init];
-    //setupmodel
-    model=[[DeepLabV3 alloc]init];
-    if(coremodel=[VNCoreMLModel modelForMLModel:model.model error:nil])
-    {
-        coreMLRequest=[[VNCoreMLRequest alloc]initWithModel:coremodel completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
 
+    //setupmodel
+    model = [[DeepLabV3FP16 alloc]init];
+    coremodel = [VNCoreMLModel modelForMLModel:model.model error:nil];
+    if (coremodel) {
+        coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel
+                                             completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
             [self visionRequestDidComplete:coreMLRequest error:error];
             coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
         }];
     }
-   
-    //NOTE::이 시점에는 captureSession이 할당/생성되지 않아 1초뒤에 시도하도록 임시로 처리.
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        for (AVCaptureConnection *connection in self.local_view.captureSession.connections) {
-//            connection.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-//        }
-//    });
-    videoCapturer=[[RTCCameraVideoCapturer alloc]initWithDelegate:self];
-    NSArray *device=[RTCCameraVideoCapturer captureDevices];
-//    for(int i=0;i<[device count];i++)
-//    {
-//        //if([device[i] position]==2) break;
-//    }
-    NSArray *format=[RTCCameraVideoCapturer supportedFormatsForDevice:device[1]];
-    [videoCapturer startCaptureWithDevice:device[1]
-                                   format:format[0] fps:24];
+
+    videoCapturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:self];
+    NSArray *device = [RTCCameraVideoCapturer captureDevices];
+
+    NSArray<AVCaptureDeviceFormat *> *formatList = [RTCCameraVideoCapturer supportedFormatsForDevice:device[1]];
+    for (AVCaptureDeviceFormat *format in formatList) {
+        CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+        if (dimension.width >= 360 || dimension.height >= 360) {
+            [videoCapturer startCaptureWithDevice:device[1]
+                                           format:format
+                                              fps:10];
+            break;
+        }
+    }
 
     NSURL *url = [[NSURL alloc] initWithString:@"wss://18.223.76.233/websocket"];
     websocket = [[WebSocketChannel alloc] initWithURL: url]; //url설정, timer설정 등등 socket open
@@ -181,9 +178,9 @@ int height = 0;
 }
 
 - (RTCMediaConstraints *)defaultMediaAudioConstraints {
-    NSDictionary *mandatoryConstraints = @{ kRTCMediaConstraintsLevelControl : kRTCMediaConstraintsValueFalse };
+//    NSDictionary *mandatoryConstraints = @{ kRTCMediaConstraintsLevelControl : kRTCMediaConstraintsValueFalse };
     RTCMediaConstraints *constraints =
-    [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints
+    [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil/*mandatoryConstraints*/
                                           optionalConstraints:nil];
     return constraints;
 }
@@ -231,24 +228,6 @@ int height = 0;
     }
 
     return sender;
-}
-
-- (nullable NSDictionary *)currentMediaConstraint {
-    NSDictionary *mediaConstraintsDictionary = nil;
-
-    NSString *widthConstraint = @"480"; //카메라 해상도 480x360줬을 때 크기가 딱 맞으면 화질 좋고, 안 맞으면 줄여서 좀 덜 보이고 이럼.
-    NSString *heightConstraint = @"360";//안보이는 건 그 해상도 지원 안해서 그런거임
-    NSString *frameRateConstrait = @"20";
-    if (widthConstraint && heightConstraint) {
-        mediaConstraintsDictionary = @{
-                                       kRTCMediaConstraintsMinWidth : widthConstraint,
-                                       kRTCMediaConstraintsMaxWidth : widthConstraint,
-                                       kRTCMediaConstraintsMinHeight : heightConstraint,
-                                       kRTCMediaConstraintsMaxHeight : heightConstraint,
-                                       kRTCMediaConstraintsMaxFrameRate: frameRateConstrait,
-                                       };
-    }
-    return mediaConstraintsDictionary;
 }
 
 - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
@@ -419,20 +398,16 @@ int height = 0;
     [localTrack.source capturer:capturer didCaptureVideoFrame:frame]; //remote에 쏴주기
     
     RTCCVPixelBuffer* remotepixel=(RTCCVPixelBuffer*)frame.buffer;
-    __block CVPixelBufferRef pixelBuffer=remotepixel.pixelBuffer;
-    //    CVPixelBufferRef pixelBuffer=[frame nativeHandle];
+    CVPixelBufferRef pixelBuffer=remotepixel.pixelBuffer;
+    if (coreMLRequest) {
+        img_handler=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:pixelBuffer options:@{}];
+        [img_handler performRequests:@[coreMLRequest] error:nil];
 
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-        if(coreMLRequest)
-        {//진입함
-            img_handler=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:pixelBuffer options:@{}];
-            [img_handler performRequests:@[coreMLRequest] error:nil];
-
-        }
-    });
-    [self.local_view renderFrame:newFrame]; //현재 디바이스 뷰
+    }
+//    [self.local_view renderFrame:frame];
+    [self renderLocalViewWithNewVideoFrame:frame
+                           inferenceResult:inferenceResult];
     NSLog(@"========didcapturevideoframe 호출됨");
-
 }
 
 #pragma mark - MyRemoteRendererDelegate
@@ -448,15 +423,126 @@ int height = 0;
 }
 
 #pragma mark - Handler
--(void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
+- (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
     NSLog(@"========visionRequestDidComplete 호출됨");
 
     dispatch_async(dispatch_get_main_queue(), ^{//작업이 오래 걸리는 걸 백그라운드에서 실행시키기 위해
-        observation=[[VNPixelBufferObservation alloc]init];
-        observation=(VNPixelBufferObservation *) request.results[0];
-        //newFrame=[RTCVideoFrame alloc]init
-        RTCCVPixelBuffer *temp=(RTCCVPixelBuffer*) observation.pixelBuffer;
-        newFrame=[[RTCVideoFrame alloc]initWithBuffer:temp rotation:0 timeStampNs:0];
+        inferenceResult = [[request.results[0] featureValue] multiArrayValue];
+        
+        // 513 x 513 pixelBuffer를 생성
+        // pixelBuffer에 mlMultiArray의 값으로 흰색 / 검은색을 구분하여 채웁니다.
+        // pixelBuffer를 RTCVideoFrame으로 만듭니다.
+        // local_view에 renderFrame으로 rendering해줍니다.
     });
 }
+
+- (void)renderLocalViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame
+                         inferenceResult:(MLMultiArray *)inferenceResult {
+    if (videoFrame == nil || inferenceResult == nil) {
+        return;
+    }
+    
+    int segmentationWidth = [inferenceResult.shape[0] intValue];
+    int segmentationHeight = [inferenceResult.shape[1] intValue];
+    
+//    CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer*)newFrame.buffer).pixelBuffer;
+//    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer);
+//    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);
+    
+    CVPixelBufferRef pixelBuffer = [self createPixelBufferWithSize:CGSizeMake(segmentationWidth, segmentationHeight)];
+    
+    const int kBytesPerPixel = 4;
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+    uint8_t *baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
+
+    for (int row=0; row<segmentationHeight; row++) {
+        uint8_t *pixel = baseAddress + row * bytesPerRow;
+        for (int column=0; column<segmentationWidth; column++) {
+            int index = column * segmentationHeight + row;
+            if (inferenceResult[index].shortValue > 0) {
+                pixel[0] = 255; // BGRA, Blue value
+                pixel[1] = 255; // Green value
+                pixel[2] = 255; // Red value
+            } else {
+                pixel[0] = 0; // BGRA, Blue value
+                pixel[1] = 0; // Green value
+                pixel[2] = 0; // Red value
+            }
+            pixel += kBytesPerPixel;
+        }
+    }
+//    for (int row=0; row<pixelBufferHeight; row++) {
+//        uint8_t *pixel = baseAddress + row * bytesPerRow;
+//        for (int column=0; column<pixelBufferWidth; column++) {
+//            int index = column * segmentationHeight * (segmentationHeight / pixelBufferHeight)
+//                        + row * (segmentationWidth / pixelBufferWidth);
+//            if (inferenceResult[index].shortValue == 0) {
+//                pixel[0] = 0; // BGRA, Blue value
+//                pixel[1] = 0; // Green value
+//                pixel[2] = 0; // Red value
+//            }
+//            pixel += kBytesPerPixel;
+//        }
+//    }
+    
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    
+    RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
+    RTCVideoFrame *newVideoFrame = [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer
+                                                                rotation:RTCVideoRotation_0
+                                                             timeStampNs:[NSDate date].timeIntervalSince1970];
+    [self.local_view renderFrame:newVideoFrame];
+}
+
+- (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
+    CVPixelBufferRef pixelBuffer = NULL;
+    static size_t const attributes_size = 3;
+    CFTypeRef attributesKeys[attributes_size] = {
+        kCVPixelBufferMetalCompatibilityKey,
+        kCVPixelBufferIOSurfacePropertiesKey,
+        kCVPixelBufferPixelFormatTypeKey
+    };
+    
+    CFDictionaryRef io_surface_value = CFDictionaryCreate(NULL,
+                                                          NULL, NULL, 0,
+                                                          &kCFTypeDictionaryKeyCallBacks,
+                                                          &kCFTypeDictionaryValueCallBacks);
+    
+    int64_t nv12type = kCVPixelFormatType_32BGRA;
+    CFNumberRef pixel_format = CFNumberCreate(NULL, kCFNumberLongType, &nv12type);
+    CFTypeRef values[attributes_size] = {kCFBooleanTrue, io_surface_value, pixel_format};
+    CFDictionaryRef attributes = CFDictionaryCreate(NULL,
+                                                    attributesKeys, values, attributes_size,
+                                                    &kCFTypeDictionaryKeyCallBacks,
+                                                    &kCFTypeDictionaryValueCallBacks);
+    if (io_surface_value) {
+        CFRelease(io_surface_value);
+        io_surface_value = NULL;
+    }
+    if (pixel_format) {
+        CFRelease(pixel_format);
+        pixel_format = NULL;
+    }
+    
+    CVReturn returnValue = CVPixelBufferCreate(kCFAllocatorDefault,
+                                               (size_t)(size.width),
+                                               (size_t)(size.height),
+                                               kCVPixelFormatType_32BGRA,
+                                               attributes,
+                                               &pixelBuffer);
+    CFRelease(attributes);
+    if(returnValue != kCVReturnSuccess) {
+        return nil;
+    }
+    
+    CVPixelBufferLockFlags unlockFlags = kNilOptions;
+    CVPixelBufferLockBaseAddress(pixelBuffer, unlockFlags);
+    uint8_t *baseAddress = (unsigned char *)(CVPixelBufferGetBaseAddress(pixelBuffer));
+    memset(baseAddress, 0xFF, size.width * size.height * 4);
+
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    return pixelBuffer;
+}
+
 @end

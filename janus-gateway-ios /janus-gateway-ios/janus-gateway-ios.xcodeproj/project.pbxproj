@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1B68AE20884D179BD06D1F20 /* libPods-janus-gateway-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB9CB144A52379C61B832DF /* libPods-janus-gateway-ios.a */; };
 		1E20E52D26C650F40086664F /* MyRemoteRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E20E52C26C650F40086664F /* MyRemoteRenderer.m */; };
+		1ED4801C26CD224800F0FCDE /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ED4801A26CD21EB00F0FCDE /* WebRTC.framework */; };
+		1ED4801F26CD22A900F0FCDE /* WebRTC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1ED4801A26CD21EB00F0FCDE /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1ED4802226CD25D300F0FCDE /* DeepLabV3Int8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 1ED4802026CD25D300F0FCDE /* DeepLabV3Int8LUT.mlmodel */; };
+		1ED4802326CD25D300F0FCDE /* DeepLabV3FP16.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 1ED4802126CD25D300F0FCDE /* DeepLabV3FP16.mlmodel */; };
 		27078DA41E1BC8D0002199B5 /* WebSocketChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */; };
 		27078DA81E1C0D0C002199B5 /* RTCSessionDescription+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DA71E1C0D0C002199B5 /* RTCSessionDescription+JSON.m */; };
 		27078DB91E1E10DB002199B5 /* JanusHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 27078DB81E1E10DB002199B5 /* JanusHandle.m */; };
@@ -23,11 +27,27 @@
 		F9CFC27326CCD45A000A2B24 /* DeepLabV3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		1ED4801E26CD229A00F0FCDE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1ED4801F26CD22A900F0FCDE /* WebRTC.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0113F09BBDF970E793971334 /* Pods-Janus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Janus.release.xcconfig"; path = "Pods/Target Support Files/Pods-Janus/Pods-Janus.release.xcconfig"; sourceTree = "<group>"; };
 		0F29BBA87E5964CEE3CB5EC7 /* Pods-janus-gateway-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-janus-gateway-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		1E20E52B26C650F40086664F /* MyRemoteRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyRemoteRenderer.h; sourceTree = "<group>"; };
 		1E20E52C26C650F40086664F /* MyRemoteRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyRemoteRenderer.m; sourceTree = "<group>"; };
+		1ED4801A26CD21EB00F0FCDE /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = Janus/WebRTC.framework; sourceTree = "<group>"; };
+		1ED4802026CD25D300F0FCDE /* DeepLabV3Int8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3Int8LUT.mlmodel; sourceTree = "<group>"; };
+		1ED4802126CD25D300F0FCDE /* DeepLabV3FP16.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3FP16.mlmodel; sourceTree = "<group>"; };
 		27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocketChannel.m; sourceTree = "<group>"; };
 		27078DA31E1BC8D0002199B5 /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannel.h; sourceTree = "<group>"; };
 		27078DA61E1C0D0C002199B5 /* RTCSessionDescription+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCSessionDescription+JSON.h"; sourceTree = "<group>"; };
@@ -55,15 +75,10 @@
 		279F899F1E1BBECE00B651E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		279F89A21E1BBECE00B651E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		279F89A41E1BBECE00B651E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		279F89AA1E1BBFD300B651E7 /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebRTC.framework; sourceTree = "<group>"; };
 		639F7C4E4E0B1E1FBC672BD9 /* Pods-Janus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Janus.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Janus/Pods-Janus.debug.xcconfig"; sourceTree = "<group>"; };
 		B0EDAAEFD9A7DD4C14599CFA /* libPods-Janus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Janus.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10966B05AAC6A5B5314B7E0 /* Pods-janus-gateway-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-janus-gateway-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios.release.xcconfig"; sourceTree = "<group>"; };
 		DBB9CB144A52379C61B832DF /* libPods-janus-gateway-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-janus-gateway-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F9CFC26726C3C8AB000A2B24 /* VideoCaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoCaptureController.h; sourceTree = "<group>"; };
-		F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoCaptureController.m; sourceTree = "<group>"; };
-		F9CFC26926C3CCEF000A2B24 /* CaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaptureController.m; sourceTree = "<group>"; };
-		F9CFC26A26C3CCFE000A2B24 /* CaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaptureController.h; sourceTree = "<group>"; };
 		F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,6 +88,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B68AE20884D179BD06D1F20 /* libPods-janus-gateway-ios.a in Frameworks */,
+				1ED4801C26CD224800F0FCDE /* WebRTC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +131,8 @@
 				27078DC11E1E3E3E002199B5 /* JanusConnection.m */,
 				27078DB71E1E10C2002199B5 /* JanusHandle.h */,
 				F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */,
+				1ED4802126CD25D300F0FCDE /* DeepLabV3FP16.mlmodel */,
+				1ED4802026CD25D300F0FCDE /* DeepLabV3Int8LUT.mlmodel */,
 				27078DB81E1E10DB002199B5 /* JanusHandle.m */,
 				27078DBD1E1E1932002199B5 /* JanusTransaction.h */,
 				27078DBE1E1E1932002199B5 /* JanusTransaction.m */,
@@ -122,10 +140,6 @@
 				27078DA71E1C0D0C002199B5 /* RTCSessionDescription+JSON.m */,
 				27078DA21E1BC8D0002199B5 /* WebSocketChannel.m */,
 				27078DA31E1BC8D0002199B5 /* WebSocketChannel.h */,
-				F9CFC26A26C3CCFE000A2B24 /* CaptureController.h */,
-				F9CFC26926C3CCEF000A2B24 /* CaptureController.m */,
-				F9CFC26726C3C8AB000A2B24 /* VideoCaptureController.h */,
-				F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */,
 				279F89961E1BBECE00B651E7 /* AppDelegate.h */,
 				279F89971E1BBECE00B651E7 /* AppDelegate.m */,
 				279F89991E1BBECE00B651E7 /* ViewController.h */,
@@ -134,7 +148,6 @@
 				279F899F1E1BBECE00B651E7 /* Assets.xcassets */,
 				279F89A11E1BBECE00B651E7 /* LaunchScreen.storyboard */,
 				279F89A41E1BBECE00B651E7 /* Info.plist */,
-				279F89AA1E1BBFD300B651E7 /* WebRTC.framework */,
 				279F89931E1BBECE00B651E7 /* Supporting Files */,
 				1E20E52B26C650F40086664F /* MyRemoteRenderer.h */,
 				1E20E52C26C650F40086664F /* MyRemoteRenderer.m */,
@@ -153,6 +166,7 @@
 		62199768F2ED0399B2F8C11D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1ED4801A26CD21EB00F0FCDE /* WebRTC.framework */,
 				27078DB51E1D4B95002199B5 /* libc++.tbd */,
 				27078DB31E1D4B8B002199B5 /* VideoToolbox.framework */,
 				27078DB11E1D4B84002199B5 /* GLKit.framework */,
@@ -177,7 +191,7 @@
 				279F898C1E1BBECE00B651E7 /* Sources */,
 				279F898D1E1BBECE00B651E7 /* Frameworks */,
 				279F898E1E1BBECE00B651E7 /* Resources */,
-				54632C89A0CC1FE639E684D0 /* [CP] Embed Pods Frameworks */,
+				1ED4801E26CD229A00F0FCDE /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -242,24 +256,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		54632C89A0CC1FE639E684D0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios-frameworks.sh",
-				"${PODS_ROOT}/WebRTC/WebRTC.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-janus-gateway-ios/Pods-janus-gateway-ios-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C9C675CE91F18F5109254B28 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -285,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ED4802326CD25D300F0FCDE /* DeepLabV3FP16.mlmodel in Sources */,
 				279F899B1E1BBECE00B651E7 /* ViewController.m in Sources */,
 				27078DBF1E1E1932002199B5 /* JanusTransaction.m in Sources */,
 				27078DA81E1C0D0C002199B5 /* RTCSessionDescription+JSON.m in Sources */,
@@ -295,6 +292,7 @@
 				27078DC21E1E3E3E002199B5 /* JanusConnection.m in Sources */,
 				279F89981E1BBECE00B651E7 /* AppDelegate.m in Sources */,
 				279F89951E1BBECE00B651E7 /* main.m in Sources */,
+				1ED4802226CD25D300F0FCDE /* DeepLabV3Int8LUT.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +421,7 @@
 					"$(PROJECT_DIR)/Janus",
 				);
 				INFOPLIST_FILE = Janus/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.skt.prod.homework;
@@ -446,7 +444,7 @@
 					"$(PROJECT_DIR)/Janus",
 				);
 				INFOPLIST_FILE = Janus/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.skt.prod.homework;
 				PRODUCT_NAME = "$(TARGET_NAME)";
