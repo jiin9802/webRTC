@@ -37,7 +37,8 @@ VNCoreMLModel *coremodel;
 DeepLabV3 *model;
 VNCoreMLRequest *coreMLRequest;
 VNImageRequestHandler *img_handler;
-
+VNPixelBufferObservation *observation;
+RTCVideoFrame * newFrame;
 
 
 RTCPeerConnection *publisherPeerConnection;
@@ -59,13 +60,16 @@ int height = 0;
     [view_arr insertObject:self.remoteView1 atIndex:0];
     [view_arr insertObject:self.remoteView2 atIndex:1];
     [view_arr insertObject:self.remoteView3 atIndex:2];
+    
+    observation=[[VNPixelBufferObservation alloc]init];
     //setupmodel
     model=[[DeepLabV3 alloc]init];
     if(coremodel=[VNCoreMLModel modelForMLModel:model.model error:nil])
     {
         coreMLRequest=[[VNCoreMLRequest alloc]initWithModel:coremodel completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-            
-            [self visionRequestDidComplete:request error:error];
+
+            [self visionRequestDidComplete:coreMLRequest error:error];
+            coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
         }];
     }
    
@@ -412,16 +416,21 @@ int height = 0;
 {
     //frame의 pixelbuffer를 rendering해서 uiview에 그리기
    // [frame initWithBuffer:<#(nonnull id<RTCVideoFrameBuffer>)#> rotation:<#(RTCVideoRotation)#> timeStampNs:<#(int64_t)#>]
-    UIImage *cgImage;
-    [localTrack.source capturer:capturer didCaptureVideoFrame:frame];
+    [localTrack.source capturer:capturer didCaptureVideoFrame:frame]; //remote에 쏴주기
+    
+    RTCCVPixelBuffer* remotepixel=(RTCCVPixelBuffer*)frame.buffer;
+    __block CVPixelBufferRef pixelBuffer=remotepixel.pixelBuffer;
+    //    CVPixelBufferRef pixelBuffer=[frame nativeHandle];
+
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         if(coreMLRequest)
-        {
-            img_handler=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:(__bridge CVPixelBufferRef _Nonnull)frame.buffer options:@{}];
-            [img_handler performRequests:coreMLRequest error:nil];
+        {//진입함
+            img_handler=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:pixelBuffer options:@{}];
+            [img_handler performRequests:@[coreMLRequest] error:nil];
+
         }
     });
-   // [self.local_view renderFrame:frame];
+    [self.local_view renderFrame:newFrame]; //현재 디바이스 뷰
     NSLog(@"========didcapturevideoframe 호출됨");
 
 }
@@ -440,7 +449,14 @@ int height = 0;
 
 #pragma mark - Handler
 -(void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
-    NSLog(@"========visionrequest 호출됨");
+    NSLog(@"========visionRequestDidComplete 호출됨");
 
+    dispatch_async(dispatch_get_main_queue(), ^{//작업이 오래 걸리는 걸 백그라운드에서 실행시키기 위해
+        observation=[[VNPixelBufferObservation alloc]init];
+        observation=(VNPixelBufferObservation *) request.results[0];
+        //newFrame=[RTCVideoFrame alloc]init
+        RTCCVPixelBuffer *temp=(RTCCVPixelBuffer*) observation.pixelBuffer;
+        newFrame=[[RTCVideoFrame alloc]initWithBuffer:temp rotation:0 timeStampNs:0];
+    });
 }
 @end

@@ -20,9 +20,7 @@
 		279F899E1E1BBECE00B651E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279F899C1E1BBECE00B651E7 /* Main.storyboard */; };
 		279F89A01E1BBECE00B651E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 279F899F1E1BBECE00B651E7 /* Assets.xcassets */; };
 		279F89A31E1BBECE00B651E7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 279F89A11E1BBECE00B651E7 /* LaunchScreen.storyboard */; };
-		F9CFC26D26CB4136000A2B24 /* DeepLabV3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F9CFC26C26CB4136000A2B24 /* DeepLabV3.mlmodel */; };
-		F9CFC26F26CB4A35000A2B24 /* DeepLabV3FP16.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F9CFC26E26CB4A35000A2B24 /* DeepLabV3FP16.mlmodel */; };
-		F9CFC27126CB4A39000A2B24 /* DeepLabV3Int8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F9CFC27026CB4A39000A2B24 /* DeepLabV3Int8LUT.mlmodel */; };
+		F9CFC27326CCD45A000A2B24 /* DeepLabV3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,9 +64,7 @@
 		F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoCaptureController.m; sourceTree = "<group>"; };
 		F9CFC26926C3CCEF000A2B24 /* CaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaptureController.m; sourceTree = "<group>"; };
 		F9CFC26A26C3CCFE000A2B24 /* CaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaptureController.h; sourceTree = "<group>"; };
-		F9CFC26C26CB4136000A2B24 /* DeepLabV3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = DeepLabV3.mlmodel; path = ../../../../test/ImageSegmentationML/ImageSegmentationML/imageSegmentationML/CoreML/DeepLabV3.mlmodel; sourceTree = "<group>"; };
-		F9CFC26E26CB4A35000A2B24 /* DeepLabV3FP16.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = DeepLabV3FP16.mlmodel; path = ../../../../test/ImageSegmentationML/ImageSegmentationML/imageSegmentationML/CoreML/DeepLabV3FP16.mlmodel; sourceTree = "<group>"; };
-		F9CFC27026CB4A39000A2B24 /* DeepLabV3Int8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = DeepLabV3Int8LUT.mlmodel; path = ../../../../test/ImageSegmentationML/ImageSegmentationML/imageSegmentationML/CoreML/DeepLabV3Int8LUT.mlmodel; sourceTree = "<group>"; };
+		F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,12 +111,10 @@
 		279F89921E1BBECE00B651E7 /* Janus */ = {
 			isa = PBXGroup;
 			children = (
-				F9CFC26C26CB4136000A2B24 /* DeepLabV3.mlmodel */,
-				F9CFC26E26CB4A35000A2B24 /* DeepLabV3FP16.mlmodel */,
-				F9CFC27026CB4A39000A2B24 /* DeepLabV3Int8LUT.mlmodel */,
 				27078DC01E1E3E2C002199B5 /* JanusConnection.h */,
 				27078DC11E1E3E3E002199B5 /* JanusConnection.m */,
 				27078DB71E1E10C2002199B5 /* JanusHandle.h */,
+				F9CFC27226CCD45A000A2B24 /* DeepLabV3.mlmodel */,
 				27078DB81E1E10DB002199B5 /* JanusHandle.m */,
 				27078DBD1E1E1932002199B5 /* JanusTransaction.h */,
 				27078DBE1E1E1932002199B5 /* JanusTransaction.m */,
@@ -293,13 +287,11 @@
 			files = (
 				279F899B1E1BBECE00B651E7 /* ViewController.m in Sources */,
 				27078DBF1E1E1932002199B5 /* JanusTransaction.m in Sources */,
-				F9CFC27126CB4A39000A2B24 /* DeepLabV3Int8LUT.mlmodel in Sources */,
 				27078DA81E1C0D0C002199B5 /* RTCSessionDescription+JSON.m in Sources */,
-				F9CFC26D26CB4136000A2B24 /* DeepLabV3.mlmodel in Sources */,
+				F9CFC27326CCD45A000A2B24 /* DeepLabV3.mlmodel in Sources */,
 				27078DA41E1BC8D0002199B5 /* WebSocketChannel.m in Sources */,
 				27078DB91E1E10DB002199B5 /* JanusHandle.m in Sources */,
 				1E20E52D26C650F40086664F /* MyRemoteRenderer.m in Sources */,
-				F9CFC26F26CB4A35000A2B24 /* DeepLabV3FP16.mlmodel in Sources */,
 				27078DC21E1E3E3E002199B5 /* JanusConnection.m in Sources */,
 				279F89981E1BBECE00B651E7 /* AppDelegate.m in Sources */,
 				279F89951E1BBECE00B651E7 /* main.m in Sources */,
