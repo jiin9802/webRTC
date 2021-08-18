@@ -449,6 +449,9 @@ int height = 0;
 //    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer);
 //    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);
     
+    // TODO::videoFrame -> pixelbuffer format을 32bgra로 전환시키거나, 새로운 pixel buffer로 만들어서
+    // inferenceResult를 기반으로 배경을 지워서 보여주자!(inferece result 값이 0 인 경우 검정색으로 색칠..)
+    
     CVPixelBufferRef pixelBuffer = [self createPixelBufferWithSize:CGSizeMake(segmentationWidth, segmentationHeight)];
     
     const int kBytesPerPixel = 4;
