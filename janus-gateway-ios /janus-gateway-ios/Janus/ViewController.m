@@ -122,7 +122,6 @@ int height = 0;
     }
 }
 - (RTCEAGLVideoView *)createRemoteView {
-    NSInteger index;
     RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] init];
     //remoteView.contentMode=UIViewContentModeScaleAspectFill;
     //[remoteView renderFrame:nil];
@@ -240,7 +239,6 @@ int height = 0;
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didAddStream:(RTCMediaStream *)stream {
     NSLog(@"=========didAddStream");
-    NSInteger index=0;
     JanusConnection *janusConnection;
     for (NSNumber *key in peerConnectionDict) {
         JanusConnection *jc = peerConnectionDict[key];
@@ -491,6 +489,7 @@ int height = 0;
     
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     
+    //RTCCVPixelBufferRef->RTCCVPixelBuffer 바꾸기
     RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
     RTCVideoFrame *newVideoFrame = [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer
                                                                 rotation:RTCVideoRotation_0
