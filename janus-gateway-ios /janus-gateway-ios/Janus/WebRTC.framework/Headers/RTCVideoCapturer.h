@@ -10,25 +10,21 @@
 
 #import <WebRTC/RTCVideoFrame.h>
 
-#import <WebRTC/RTCMacros.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
-@class RTC_OBJC_TYPE(RTCVideoCapturer);
+@class RTCVideoCapturer;
 
-RTC_OBJC_EXPORT
-@protocol RTC_OBJC_TYPE
-(RTCVideoCapturerDelegate)<NSObject> -
-    (void)capturer : (RTC_OBJC_TYPE(RTCVideoCapturer) *)capturer didCaptureVideoFrame
-    : (RTC_OBJC_TYPE(RTCVideoFrame) *)frame;
+RTC_EXPORT
+@protocol RTCVideoCapturerDelegate <NSObject>
+- (void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame;
 @end
 
-RTC_OBJC_EXPORT
-@interface RTC_OBJC_TYPE (RTCVideoCapturer) : NSObject
+RTC_EXPORT
+@interface RTCVideoCapturer : NSObject
 
-@property(nonatomic, weak) id<RTC_OBJC_TYPE(RTCVideoCapturerDelegate)> delegate;
+@property(nonatomic, readonly, weak) id<RTCVideoCapturerDelegate> delegate;
 
-- (instancetype)initWithDelegate:(id<RTC_OBJC_TYPE(RTCVideoCapturerDelegate)>)delegate;
+- (instancetype)initWithDelegate:(id<RTCVideoCapturerDelegate>)delegate;
 
 @end
 

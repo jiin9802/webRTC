@@ -15,9 +15,11 @@
 @end
 
 
-@interface ViewController : UIViewController<RTCPeerConnectionDelegate, WebSocketDelegate, RTCVideoViewDelegate, MyRemoteRendererDelegate>
+@interface ViewController : UIViewController<RTCPeerConnectionDelegate, WebSocketDelegate, RTCEAGLVideoViewDelegate, MyRemoteRendererDelegate>
 
 @property(nonatomic, strong) RTCPeerConnectionFactory *factory;
+
+- (void)renderFrame:(RTCVideoFrame*)frame;
 
 @end
 

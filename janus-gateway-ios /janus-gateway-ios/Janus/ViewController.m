@@ -7,9 +7,6 @@
 #import <Vision/Vision.h>
 #import <CoreML/CoreML.h>
 #import "DeepLabV3.h"
-#import "DeepLabV3FP16.h"
-#import "DeepLabV3Int8LUT.h"
-
 
 static NSString * const kARDMediaStreamId = @"ARDAMS";
 static NSString * const kARDAudioTrackId = @"ARDAMSa0";
@@ -35,7 +32,7 @@ NSMutableArray *peerConnectionArray;
 NSArray *resultArray;
 NSMutableArray *view_arr;
 VNCoreMLModel *coremodel;
-DeepLabV3FP16 *model;
+DeepLabV3 *model;
 VNCoreMLRequest *coreMLRequest;
 VNImageRequestHandler *img_handler;
 RTCVideoFrame *newFrame;
@@ -62,7 +59,7 @@ int height = 0;
     [view_arr insertObject:self.remoteView3 atIndex:2];
 
     //setupmodel
-    model = [[DeepLabV3FP16 alloc]init];
+    model = [[DeepLabV3 alloc]init];
     coremodel = [VNCoreMLModel modelForMLModel:model.model error:nil];
     if (coremodel) {
         coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel

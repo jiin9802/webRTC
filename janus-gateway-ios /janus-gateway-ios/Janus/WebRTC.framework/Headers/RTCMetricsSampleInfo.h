@@ -14,8 +14,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
-@interface RTC_OBJC_TYPE (RTCMetricsSampleInfo) : NSObject
+RTC_EXPORT
+@interface RTCMetricsSampleInfo : NSObject
 
 /**
  * Example of RTCMetricsSampleInfo:

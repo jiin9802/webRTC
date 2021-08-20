@@ -16,9 +16,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 
-@interface RTC_OBJC_TYPE (RTCVideoSource) : RTC_OBJC_TYPE(RTCMediaSource) <RTC_OBJC_TYPE(RTCVideoCapturerDelegate)>
+@interface RTCVideoSource : RTCMediaSource <RTCVideoCapturerDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
 

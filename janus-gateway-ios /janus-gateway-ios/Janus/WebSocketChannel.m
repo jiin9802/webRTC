@@ -383,8 +383,8 @@ NSString *letters = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345
                                    @"session_id": sessionId,
                                    @"handle_id": handleId,
                                    };
-    [_socket sendString:[self jsonMessage:offerMessage]
-                  error:nil];
+
+    [_socket send:[self jsonMessage:offerMessage]];
 }
 
 - (void)subscriberOnLeaving:(JanusHandle *) handle {
@@ -402,26 +402,22 @@ NSString *letters = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345
     transDict[transaction] = jt;
 
     NSDictionary *message = @{
-                               @"janus": @"detach",
-                               @"transaction": transaction,
-                               @"session_id": sessionId,
-                               @"handle_id": handle.handleId,
-                              };
+                                   @"janus": @"detach",
+                                   @"transaction": transaction,
+                                   @"session_id": sessionId,
+                                   @"handle_id": handle.handleId,
+                                   };
 
-    [_socket sendString:[self jsonMessage:message]
-                  error:nil];
+    [_socket send:[self jsonMessage:message]];
 }
 
 - (void)keepAlive {
-    if (sessionId != nil) {
-        NSDictionary *dict = @{
-                               @"janus": @"keepalive",
-                               @"session_id": sessionId,
-                               @"transaction": [self randomStringWithLength:12],
-                               };
-        [_socket sendString:[self jsonMessage:dict]
-                      error:nil];
-    }
+    NSDictionary *dict = @{
+                           @"janus": @"keepalive",
+                           @"session_id": sessionId,
+                           @"transaction": [self randomStringWithLength:12],
+                           };
+    [_socket send:[self jsonMessage:dict]];
 }
 
 - (NSString *)jsonMessage:(NSDictionary *)dict {

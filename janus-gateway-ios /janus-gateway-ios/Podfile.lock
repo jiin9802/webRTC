@@ -14,21 +14,26 @@ PODS:
   - AFNetworking/Serialization (4.0.1)
   - AFNetworking/UIKit (4.0.1):
     - AFNetworking/NSURLSession
-  - SocketRocket (0.6.0)
+  - SocketRocket (0.5.1)
+  - WebRTC (63.11.20455)
 
 DEPENDENCIES:
   - AFNetworking
   - SocketRocket
+  - WebRTC
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
+    - WebRTC
+  trunk:
     - SocketRocket
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
+  WebRTC: f2a6203584745fe53532633397557876b5d71640
 
-PODFILE CHECKSUM: adc404508b1469244d82fee12e2df729fe96cbc8
+PODFILE CHECKSUM: 1b362a0803fe878968b61060492b6bb220ec1442
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.10.1
