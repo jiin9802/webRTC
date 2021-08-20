@@ -392,7 +392,6 @@ int height = 0;
 -(void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame
 {
     //frame의 pixelbuffer를 rendering해서 uiview에 그리기
-   // [frame initWithBuffer:<#(nonnull id<RTCVideoFrameBuffer>)#> rotation:<#(RTCVideoRotation)#> timeStampNs:<#(int64_t)#>]
     [localTrack.source capturer:capturer didCaptureVideoFrame:frame]; //remote에 쏴주기
     
     RTCCVPixelBuffer* remotepixel=(RTCCVPixelBuffer*)frame.buffer;
@@ -411,7 +410,7 @@ int height = 0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    dispatch_async(dispatch_get_main_queue(), ^{//작업이 오래 걸리는 걸 백그라운드에서 실행시키기 위해
+    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다. 메인은 멈추면 안되기 때문에 보통 지양한다.
         for (int i=0;i<[view_arr count];i++){
             for (RTCEAGLVideoView *view in [view_arr[i] subviews]) {
                 [view renderFrame:frame];
@@ -424,7 +423,8 @@ int height = 0;
 - (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
     NSLog(@"========visionRequestDidComplete 호출됨");
 
-    dispatch_async(dispatch_get_main_queue(), ^{//작업이 오래 걸리는 걸 백그라운드에서 실행시키기 위해
+    //capturer thread  에서 실행하거나..
+    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다.
         inferenceResult = [[request.results[0] featureValue] multiArrayValue];
         
         // 513 x 513 pixelBuffer를 생성
@@ -443,58 +443,31 @@ int height = 0;
     int segmentationWidth = [inferenceResult.shape[0] intValue];
     int segmentationHeight = [inferenceResult.shape[1] intValue];
     
-//    CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer*)newFrame.buffer).pixelBuffer;
-//    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer);
-//    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);
-    
-    // TODO::videoFrame -> pixelbuffer format을 32bgra로 전환시키거나, 새로운 pixel buffer로 만들어서
-    // inferenceResult를 기반으로 배경을 지워서 보여주자!(inferece result 값이 0 인 경우 검정색으로 색칠..)
-    
-    CVPixelBufferRef pixelBuffer = [self createPixelBufferWithSize:CGSizeMake(segmentationWidth, segmentationHeight)];
-    
-    const int kBytesPerPixel = 4;
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-    uint8_t *baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
+    CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer*)videoFrame.buffer).pixelBuffer; //480x360 format:420v
 
-    for (int row=0; row<segmentationHeight; row++) {
-        uint8_t *pixel = baseAddress + row * bytesPerRow;
-        for (int column=0; column<segmentationWidth; column++) {
-            int index = column * segmentationHeight + row;
-            if (inferenceResult[index].shortValue > 0) {
-                pixel[0] = 255; // BGRA, Blue value
-                pixel[1] = 255; // Green value
-                pixel[2] = 255; // Red value
-            } else {
-                pixel[0] = 0; // BGRA, Blue value
-                pixel[1] = 0; // Green value
-                pixel[2] = 0; // Red value
+    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer); //480
+    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);//360
+
+    const int kBytesPerPixel = 1;
+
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    uint8_t *baseAddressPlane=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
+    size_t bytesPerRowPlane=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    for (int row=0; row<pixelBufferHeight; row++) {
+        uint8_t *pixel = baseAddressPlane+row*bytesPerRowPlane;
+        for (int column=0; column<pixelBufferWidth; column++) {
+            int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
+            int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
+            int index = row_index*segmentationWidth+column_index;
+            if (inferenceResult[index].shortValue == 0) {
+                pixel[0]=0;
             }
             pixel += kBytesPerPixel;
         }
     }
-//    for (int row=0; row<pixelBufferHeight; row++) {
-//        uint8_t *pixel = baseAddress + row * bytesPerRow;
-//        for (int column=0; column<pixelBufferWidth; column++) {
-//            int index = column * segmentationHeight * (segmentationHeight / pixelBufferHeight)
-//                        + row * (segmentationWidth / pixelBufferWidth);
-//            if (inferenceResult[index].shortValue == 0) {
-//                pixel[0] = 0; // BGRA, Blue value
-//                pixel[1] = 0; // Green value
-//                pixel[2] = 0; // Red value
-//            }
-//            pixel += kBytesPerPixel;
-//        }
-//    }
-    
+
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    
-    //RTCCVPixelBufferRef->RTCCVPixelBuffer 바꾸기
-    RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
-    RTCVideoFrame *newVideoFrame = [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer
-                                                                rotation:RTCVideoRotation_0
-                                                             timeStampNs:[NSDate date].timeIntervalSince1970];
-    [self.local_view renderFrame:newVideoFrame];
+    [self.local_view renderFrame:videoFrame];
 }
 
 - (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
