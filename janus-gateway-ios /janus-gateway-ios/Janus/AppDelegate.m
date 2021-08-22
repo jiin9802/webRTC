@@ -20,8 +20,7 @@
     // Override point for customization after application launch.
     RTCInitializeSSL();
     RTCSetupInternalTracer();
-    RTCSetMinDebugLogLevel(RTCLoggingSeverityVerbose);
-
+    RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
     return YES;
 }
 
