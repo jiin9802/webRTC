@@ -7,7 +7,7 @@
 #import <Vision/Vision.h>
 #import <CoreML/CoreML.h>
 #import "DeepLabV3.h"
-
+//#include "libyuv.h"
 static NSString * const kARDMediaStreamId = @"ARDAMS";
 static NSString * const kARDAudioTrackId = @"ARDAMSa0";
 static NSString * const kARDVideoTrackId = @"ARDAMSv0";
@@ -31,12 +31,16 @@ NSMutableDictionary *peerConnectionDict;
 NSMutableArray *peerConnectionArray;
 NSArray *resultArray;
 NSMutableArray *view_arr;
+//NSMutableArray *inferenceResult_remote;
 VNCoreMLModel *coremodel;
 DeepLabV3 *model;
 VNCoreMLRequest *coreMLRequest;
+VNCoreMLRequest *coreMLRequest_remote;
 VNImageRequestHandler *img_handler;
+VNImageRequestHandler *img_handler_remote;
 RTCVideoFrame *newFrame;
 MLMultiArray *inferenceResult;
+MLMultiArray *inferenceResult_remote;
 
 RTCPeerConnection *publisherPeerConnection;
 RTCVideoTrack *localTrack;
@@ -52,6 +56,7 @@ int height = 0;
     image_view=[[RTCEAGLVideoView alloc]init];
 
     peerConnectionArray=[[NSMutableArray alloc] init];
+    inferenceResult_remote=[[NSMutableArray alloc] init];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
     [view_arr insertObject:self.remoteView1 atIndex:0];
@@ -407,28 +412,56 @@ int height = 0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다. 메인은 멈추면 안되기 때문에 보통 지양한다.
-        for (int i=0;i<[view_arr count];i++){
-            for (RTCEAGLVideoView *view in [view_arr[i] subviews]) {
-                [view renderFrame:frame];
-            }
-        }
-    });
+    if(coremodel){
+        coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel
+                                             completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
+            [self visionRequestDidComplete_remote:coreMLRequest_remote error:error];
+            coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
+        }];
+    }
+    CVPixelBufferRef newBuffer;
+    size_t width=frame.buffer.width; //640
+    size_t height=frame.buffer.height; //480
+    RTCI420Buffer* buffer=(RTCI420Buffer*)frame.buffer;
+    uint8_t *address_arr[3]={buffer.dataY,buffer.dataU,buffer.dataV};
+    size_t width_arr[3]={width,width/2,width/2};
+    size_t height_arr[3]={height,height/2,height/2};
+    size_t bytesPerRow_arr[3]={buffer.strideY,buffer.strideU,buffer.strideV};
+    NSData *d=[NSData dataWithBytes:buffer.dataY length:width*height+(width/2)*(height/2)*2];
+    uint8_t *y=buffer.dataY;
+
+    //NSData *d=frame.buffer;
+    
+    //uint8_t *data=CVPixelBufferGetBaseAddress(frame.buffer);
+    CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, (__bridge void * _Nullable)(d), width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
+//    CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, (__bridge void * _Nonnull)(d), (int)width*4, nil, nil,@{}, &newBuffer);
+    //kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+    
+    if (coreMLRequest_remote) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
+        img_handler_remote=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:newBuffer options:@{}];
+        [img_handler_remote performRequests:@[coreMLRequest_remote] error:nil];
+
+    }
+    [self renderRemoteViewWithNewVideoFrame:frame
+                           inferenceResult:inferenceResult_remote];
+    
 }
 
 #pragma mark - Handler
 - (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
     NSLog(@"========visionRequestDidComplete 호출됨");
+    inferenceResult = [[request.results[0] featureValue] multiArrayValue];
 
     //capturer thread  에서 실행하거나..
-    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다.
-        inferenceResult = [[request.results[0] featureValue] multiArrayValue];
-        
-        // 513 x 513 pixelBuffer를 생성
-        // pixelBuffer에 mlMultiArray의 값으로 흰색 / 검은색을 구분하여 채웁니다.
-        // pixelBuffer를 RTCVideoFrame으로 만듭니다.
-        // local_view에 renderFrame으로 rendering해줍니다.
-    });
+    //exception 된 이유:interferenceresult값 받아와서 써야 하는데 둘이 다른 thread라 값이 없을 때 요청하는 경우도 있어서
+    //해결: coreML이 자동으로 동기화 해줘서 main th async 하지 않으면 같은 thread에서 안전하게 동작 잘 한다.
+//    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다.
+//
+//        // 513 x 513 pixelBuffer를 생성
+//        // pixelBuffer에 mlMultiArray의 값으로 흰색 / 검은색을 구분하여 채웁니다.
+//        // pixelBuffer를 RTCVideoFrame으로 만듭니다.
+//        // local_view에 renderFrame으로 rendering해줍니다.
+//    });
 }
 
 - (void)renderLocalViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame
@@ -467,6 +500,81 @@ int height = 0;
     [self.local_view renderFrame:videoFrame];
 }
 
+- (void)visionRequestDidComplete_remote:(VNRequest *)request error:(NSError *)error {
+    //NSLog(@"========visionRequestDidComplete 호출됨");
+    inferenceResult_remote = [[request.results[0] featureValue] multiArrayValue];
+
+}
+- (void)renderRemoteViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame //rtci420buffer이용해서 pixelbuffer말고
+                         inferenceResult:(MLMultiArray *)inferenceResult {
+    if (videoFrame == nil || inferenceResult == nil) {
+        return;
+    }
+    //    int stride_y=buffer.strideY;//640
+    //    int stride_u=buffer.strideU;//320
+    //    int stride_v=buffer.strideV;//320
+    int segmentationWidth = [inferenceResult.shape[0] intValue];
+    int segmentationHeight = [inferenceResult.shape[1] intValue];
+    
+    RTCI420Buffer* buffer=(RTCI420Buffer*)videoFrame.buffer;
+    int width=buffer.width; //640
+    int height=buffer.height; //480
+    uint8_t *y=buffer.dataY;
+    uint8_t *u=buffer.dataU;
+    uint8_t *v=buffer.dataV;
+    const int kBytesPerPixel = 1;
+    int stride_y=buffer.strideY;//640
+    int stride_u=buffer.strideU;//320
+    int stride_v=buffer.strideV;//320
+
+    for(int row=0; row<height;row++)
+    {
+        uint8_t *yLine=&buffer.dataY[row*buffer.strideY];
+        for(int column=0;column<width;column++)
+        {
+            int column_index=column * (segmentationWidth / (double)width);
+            int row_index= row * (segmentationHeight / (double)height);
+            int index = row_index*segmentationWidth+column_index;
+            if (inferenceResult[index].shortValue == 0) {
+                yLine[0]=0;
+            }
+            yLine+=kBytesPerPixel;
+        }
+    }
+    
+    //uint8_t *y=&buffer.dataY
+//    CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer*)videoFrame.buffer).pixelBuffer; //480x360 format:420v
+//
+//    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer); //480
+//    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);//360
+//
+//    const int kBytesPerPixel = 1;
+//
+//    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+//    uint8_t *baseAddressPlane=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
+//    size_t bytesPerRowPlane=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+//    for (int row=0; row<pixelBufferHeight; row++) {
+//        uint8_t *pixel = baseAddressPlane+row*bytesPerRowPlane;
+//        for (int column=0; column<pixelBufferWidth; column++) {
+//            int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
+//            int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
+//            int index = row_index*segmentationWidth+column_index;
+//            if (inferenceResult[index].shortValue == 0) {
+//                pixel[0]=0;
+//            }
+//            pixel += kBytesPerPixel;
+//        }
+//    }
+//
+//    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    dispatch_async(dispatch_get_main_queue(), ^{
+    for (int i=0;i<[view_arr count];i++){
+        for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
+            [view renderFrame:videoFrame];
+        }
+    }
+    });
+}
 - (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
     CVPixelBufferRef pixelBuffer = NULL;
     static size_t const attributes_size = 3;
