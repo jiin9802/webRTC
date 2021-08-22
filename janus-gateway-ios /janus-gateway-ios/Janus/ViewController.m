@@ -33,6 +33,7 @@ NSArray *resultArray;
 NSMutableArray *view_arr;
 //NSMutableArray *inferenceResult_remote;
 VNCoreMLModel *coremodel;
+VNCoreMLModel *coremodel_remote;
 DeepLabV3 *model;
 VNCoreMLRequest *coreMLRequest;
 VNCoreMLRequest *coreMLRequest_remote;
@@ -56,7 +57,6 @@ int height = 0;
     image_view=[[RTCEAGLVideoView alloc]init];
 
     peerConnectionArray=[[NSMutableArray alloc] init];
-    inferenceResult_remote=[[NSMutableArray alloc] init];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
     [view_arr insertObject:self.remoteView1 atIndex:0];
@@ -66,11 +66,20 @@ int height = 0;
     //setupmodel
     model = [[DeepLabV3 alloc]init];
     coremodel = [VNCoreMLModel modelForMLModel:model.model error:nil];
+    coremodel_remote = [VNCoreMLModel modelForMLModel:model.model error:nil];
+
     if (coremodel) {
         coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel
                                              completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
             [self visionRequestDidComplete:coreMLRequest error:error];
             coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
+        }];
+    }
+    if(coremodel_remote){
+        coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote
+                                             completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
+            [self visionRequestDidComplete_remote:coreMLRequest_remote error:error];
+            coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
         }];
     }
 
@@ -412,13 +421,7 @@ int height = 0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    if(coremodel){
-        coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel
-                                             completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-            [self visionRequestDidComplete_remote:coreMLRequest_remote error:error];
-            coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
-        }];
-    }
+    
     CVPixelBufferRef newBuffer;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
@@ -430,13 +433,8 @@ int height = 0;
     NSData *d=[NSData dataWithBytes:buffer.dataY length:width*height+(width/2)*(height/2)*2];
     uint8_t *y=buffer.dataY;
 
-    //NSData *d=frame.buffer;
-    
-    //uint8_t *data=CVPixelBufferGetBaseAddress(frame.buffer);
-    CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, (__bridge void * _Nullable)(d), width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
-//    CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, (__bridge void * _Nonnull)(d), (int)width*4, nil, nil,@{}, &newBuffer);
-    //kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
-    
+    CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, y, width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
+
     if (coreMLRequest_remote) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
         img_handler_remote=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:newBuffer options:@{}];
         [img_handler_remote performRequests:@[coreMLRequest_remote] error:nil];
@@ -510,22 +508,16 @@ int height = 0;
     if (videoFrame == nil || inferenceResult == nil) {
         return;
     }
-    //    int stride_y=buffer.strideY;//640
-    //    int stride_u=buffer.strideU;//320
-    //    int stride_v=buffer.strideV;//320
+
     int segmentationWidth = [inferenceResult.shape[0] intValue];
     int segmentationHeight = [inferenceResult.shape[1] intValue];
     
     RTCI420Buffer* buffer=(RTCI420Buffer*)videoFrame.buffer;
     int width=buffer.width; //640
     int height=buffer.height; //480
-    uint8_t *y=buffer.dataY;
-    uint8_t *u=buffer.dataU;
-    uint8_t *v=buffer.dataV;
+
     const int kBytesPerPixel = 1;
-    int stride_y=buffer.strideY;//640
-    int stride_u=buffer.strideU;//320
-    int stride_v=buffer.strideV;//320
+
 
     for(int row=0; row<height;row++)
     {
@@ -542,31 +534,6 @@ int height = 0;
         }
     }
     
-    //uint8_t *y=&buffer.dataY
-//    CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer*)videoFrame.buffer).pixelBuffer; //480x360 format:420v
-//
-//    size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer); //480
-//    size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);//360
-//
-//    const int kBytesPerPixel = 1;
-//
-//    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-//    uint8_t *baseAddressPlane=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
-//    size_t bytesPerRowPlane=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
-//    for (int row=0; row<pixelBufferHeight; row++) {
-//        uint8_t *pixel = baseAddressPlane+row*bytesPerRowPlane;
-//        for (int column=0; column<pixelBufferWidth; column++) {
-//            int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
-//            int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
-//            int index = row_index*segmentationWidth+column_index;
-//            if (inferenceResult[index].shortValue == 0) {
-//                pixel[0]=0;
-//            }
-//            pixel += kBytesPerPixel;
-//        }
-//    }
-//
-//    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     dispatch_async(dispatch_get_main_queue(), ^{
     for (int i=0;i<[view_arr count];i++){
         for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
