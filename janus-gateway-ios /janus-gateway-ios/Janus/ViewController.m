@@ -422,27 +422,27 @@ int height = 0;
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
     
-    CVPixelBufferRef newBuffer;
+    CVPixelBufferRef newBuffer = NULL;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
     RTCI420Buffer* buffer=(RTCI420Buffer*)frame.buffer;
-    uint8_t *address_arr[3]={buffer.dataY,buffer.dataU,buffer.dataV};
+    void *address_arr[3]={buffer.dataY,buffer.dataU,buffer.dataV};
     size_t width_arr[3]={width,width/2,width/2};
     size_t height_arr[3]={height,height/2,height/2};
     size_t bytesPerRow_arr[3]={buffer.strideY,buffer.strideU,buffer.strideV};
-    NSData *d=[NSData dataWithBytes:buffer.dataY length:width*height+(width/2)*(height/2)*2];
-    uint8_t *y=buffer.dataY;
+    void *dataPtr = (void*)buffer.dataY;
 
-    CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, y, width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
+    size_t dataLength = width*height+(width/2)*(height/2)*2;
+    CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, dataPtr, dataLength, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, nil, &newBuffer);
 
     if (coreMLRequest_remote) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
         img_handler_remote=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:newBuffer options:@{}];
         [img_handler_remote performRequests:@[coreMLRequest_remote] error:nil];
 
     }
+    CVPixelBufferRelease(newBuffer); // CoreML로 넘겨주고 나면, reference count -1
     [self renderRemoteViewWithNewVideoFrame:frame
-                           inferenceResult:inferenceResult_remote];
-    
+                            inferenceResult:inferenceResult_remote];
 }
 
 #pragma mark - Handler
