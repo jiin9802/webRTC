@@ -49,6 +49,7 @@ RTCVideoTrack *localTrack;
 RTCAudioTrack *localAudioTrack;
 
 int height = 0;
+int call=0;
 //NSMutableArray *arr;
 @synthesize factory = _factory;
 //@synthesize localView = _localView;
@@ -429,13 +430,17 @@ int height = 0;
 //    [self.local_view renderFrame:frame];
     [self renderLocalViewWithNewVideoFrame:frame
                            inferenceResult:inferenceResult];
-    NSLog(@"========didcapturevideoframe 호출됨");
+   // NSLog(@"========didcapturevideoframe 호출됨");
 }
 
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    
+    if(call%3!=0) {
+        call++;
+        return;
+        
+    }
     CVPixelBufferRef newBuffer;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
@@ -457,12 +462,15 @@ int height = 0;
     [self renderRemoteViewWithNewVideoFrame:frame
                            inferenceResult:renderer.inferenceResult
                                  view:renderer.remoteView];
+    NSLog(@"========myremoterenderer 호출됨");
+    call++;
+
     CVPixelBufferRelease(newBuffer);
 }
 
 #pragma mark - Handler
 - (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
-    NSLog(@"========visionRequestDidComplete 호출됨");
+//    NSLog(@"========visionRequestDidComplete 호출됨");
     inferenceResult = [[request.results[0] featureValue] multiArrayValue];
 
     //capturer thread  에서 실행하거나..
@@ -551,7 +559,7 @@ int height = 0;
         }
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+  //  dispatch_async(dispatch_get_main_queue(), ^{
         [view renderFrame:videoFrame];
 //
 //        for (RTCEAGLVideoView *video_view in [view subviews]) {
@@ -562,7 +570,7 @@ int height = 0;
 //            [view renderFrame:videoFrame];
 //        }
 //    }
-    });
+ //   });
 }
 - (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
     CVPixelBufferRef pixelBuffer = NULL;
