@@ -421,7 +421,15 @@ int height = 0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    
+    int p;
+    ViewController *i=renderer.delegate;
+    for(JanusConnection *peerConnection in peerConnectionArray)
+    {
+        if(peerConnection.videoView.delegate==i)
+        {
+            p=[peerConnectionArray indexOfObject:peerConnection];
+        }
+    }
     CVPixelBufferRef newBuffer;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
@@ -432,7 +440,7 @@ int height = 0;
     size_t bytesPerRow_arr[3]={buffer.strideY,buffer.strideU,buffer.strideV};
     NSData *d=[NSData dataWithBytes:buffer.dataY length:width*height+(width/2)*(height/2)*2];
     uint8_t *y=buffer.dataY;
-
+    
     CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, y, width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
 
     if (coreMLRequest_remote) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
@@ -440,9 +448,12 @@ int height = 0;
         [img_handler_remote performRequests:@[coreMLRequest_remote] error:nil];
 
     }
+    if(p<[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
+    {
     [self renderRemoteViewWithNewVideoFrame:frame
-                           inferenceResult:inferenceResult_remote];
-    
+                           inferenceResult:inferenceResult_remote
+                                 view_index:p];
+    }
 }
 
 #pragma mark - Handler
@@ -504,10 +515,12 @@ int height = 0;
 
 }
 - (void)renderRemoteViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame //rtci420buffer이용해서 pixelbuffer말고
-                         inferenceResult:(MLMultiArray *)inferenceResult {
+                         inferenceResult:(MLMultiArray *)inferenceResult
+                               view_index:(int)index{
     if (videoFrame == nil || inferenceResult == nil) {
         return;
     }
+    
 
     int segmentationWidth = [inferenceResult.shape[0] intValue];
     int segmentationHeight = [inferenceResult.shape[1] intValue];
@@ -515,7 +528,7 @@ int height = 0;
     RTCI420Buffer* buffer=(RTCI420Buffer*)videoFrame.buffer;
     int width=buffer.width; //640
     int height=buffer.height; //480
-
+    
     const int kBytesPerPixel = 1;
 
 
@@ -535,11 +548,14 @@ int height = 0;
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-    for (int i=0;i<[view_arr count];i++){
-        for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
-            [view renderFrame:videoFrame];
-        }
-    }
+        for (RTCMTLVideoView *view in [view_arr[index] subviews]) {
+                    [view renderFrame:videoFrame];
+                }
+//    for (int i=0;i<[view_arr count];i++){
+//        for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
+//            [view renderFrame:videoFrame];
+//        }
+//    }
     });
 }
 - (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
