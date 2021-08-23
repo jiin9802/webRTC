@@ -438,7 +438,6 @@ int height = 0;
     size_t width_arr[3]={width,width/2,width/2};
     size_t height_arr[3]={height,height/2,height/2};
     size_t bytesPerRow_arr[3]={buffer.strideY,buffer.strideU,buffer.strideV};
-    NSData *d=[NSData dataWithBytes:buffer.dataY length:width*height+(width/2)*(height/2)*2];
     uint8_t *y=buffer.dataY;
     
     CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, y, width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
