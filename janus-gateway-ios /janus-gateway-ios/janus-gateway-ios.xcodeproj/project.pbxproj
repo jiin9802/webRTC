@@ -128,6 +128,8 @@
 				F9CFC26826C3C902000A2B24 /* VideoCaptureController.m */,
 				279F89961E1BBECE00B651E7 /* AppDelegate.h */,
 				279F89971E1BBECE00B651E7 /* AppDelegate.m */,
+				1E20E52B26C650F40086664F /* MyRemoteRenderer.h */,
+				1E20E52C26C650F40086664F /* MyRemoteRenderer.m */,
 				279F89991E1BBECE00B651E7 /* ViewController.h */,
 				279F899A1E1BBECE00B651E7 /* ViewController.m */,
 				279F899C1E1BBECE00B651E7 /* Main.storyboard */,
@@ -136,8 +138,6 @@
 				279F89A41E1BBECE00B651E7 /* Info.plist */,
 				279F89AA1E1BBFD300B651E7 /* WebRTC.framework */,
 				279F89931E1BBECE00B651E7 /* Supporting Files */,
-				1E20E52B26C650F40086664F /* MyRemoteRenderer.h */,
-				1E20E52C26C650F40086664F /* MyRemoteRenderer.m */,
 			);
 			path = Janus;
 			sourceTree = "<group>";

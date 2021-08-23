@@ -10,7 +10,7 @@
 
 @implementation MyRemoteRenderer
 
-- (instancetype)initWithDelegate:(id<MyRemoteRendererDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<MyRemoteRendererDelegate>)delegate { //인자로 request추가?
     if (self = [super init]) {
         _delegate = delegate;
     }
@@ -22,6 +22,7 @@
     [_delegate myRemoteRenderer:self
                     renderFrame:frame];
 }
+//-(void)coreMLRequest:(
 
 - (void)setSize:(CGSize)size {
     

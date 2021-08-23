@@ -36,6 +36,7 @@ VNCoreMLModel *coremodel;
 VNCoreMLModel *coremodel_remote;
 DeepLabV3 *model;
 VNCoreMLRequest *coreMLRequest;
+VNCoreMLRequest *test;
 VNCoreMLRequest *coreMLRequest_remote;
 VNImageRequestHandler *img_handler;
 VNImageRequestHandler *img_handler_remote;
@@ -75,13 +76,7 @@ int height = 0;
             coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
         }];
     }
-    if(coremodel_remote){
-        coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote
-                                             completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-            [self visionRequestDidComplete_remote:coreMLRequest_remote error:error];
-            coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
-        }];
-    }
+    
 
     videoCapturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:self];
     NSArray *device = [RTCCameraVideoCapturer captureDevices];
@@ -264,6 +259,25 @@ int height = 0;
             RTCEAGLVideoView *remoteView=[self createRemoteView];
 //            [remoteVideoTrack addRenderer:remoteView];
             MyRemoteRenderer *remoteRenderer = [[MyRemoteRenderer alloc] initWithDelegate:self];
+            remoteRenderer.remoteView=remoteView;
+//            if(coremodel_remote){
+//                coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote];
+//                coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
+//                remoteRenderer.coreMLRequest=coreMLRequest_remote;
+//
+//                }
+            
+            if(coremodel_remote){
+                remoteRenderer.coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote
+                                                     completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
+                    remoteRenderer.inferenceResult = [[remoteRenderer.coreMLRequest.results[0] featureValue] multiArrayValue];
+
+                    //[self visionRequestDidComplete_remote:remoteRenderer.coreMLRequest error:error];
+                    remoteRenderer.coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
+                }];
+            }
+            //test=coreMLRequest_remote;
+            //remoteRenderer.coreMLRequest=coreMLRequest_remote;
             [remoteVideoTrack addRenderer:remoteRenderer];
             janusConnection.videoTrack = remoteVideoTrack;
             janusConnection.videoView=remoteView;
@@ -421,15 +435,7 @@ int height = 0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
-    int p;
-    ViewController *i=renderer.delegate;
-    for(JanusConnection *peerConnection in peerConnectionArray)
-    {
-        if(peerConnection.videoView.delegate==i)
-        {
-            p=[peerConnectionArray indexOfObject:peerConnection];
-        }
-    }
+    
     CVPixelBufferRef newBuffer;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
@@ -442,17 +448,16 @@ int height = 0;
     
     CVPixelBufferCreateWithPlanarBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, y, width*height+(width/2)*(height/2)*2, 2, address_arr, width_arr, height_arr, bytesPerRow_arr, nil, nil, @{}, &newBuffer);
 
-    if (coreMLRequest_remote) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
+    if (renderer.coreMLRequest) {//pixelbuffer하나 만들어서 넘겨주는 용도로만 쓰기
         img_handler_remote=[[VNImageRequestHandler alloc]initWithCVPixelBuffer:newBuffer options:@{}];
-        [img_handler_remote performRequests:@[coreMLRequest_remote] error:nil];
+        [img_handler_remote performRequests:@[renderer.coreMLRequest] error:nil];
 
     }
-    if(p<[view_arr count]) //4번째 입장하는 사람들이 왔다갔다 해도 arrangeview안되게
-    {
+    
     [self renderRemoteViewWithNewVideoFrame:frame
-                           inferenceResult:inferenceResult_remote
-                                 view_index:p];
-    }
+                           inferenceResult:renderer.inferenceResult
+                                 view:renderer.remoteView];
+    CVPixelBufferRelease(newBuffer);
 }
 
 #pragma mark - Handler
@@ -515,7 +520,7 @@ int height = 0;
 }
 - (void)renderRemoteViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame //rtci420buffer이용해서 pixelbuffer말고
                          inferenceResult:(MLMultiArray *)inferenceResult
-                               view_index:(int)index{
+                               view:(RTCEAGLVideoView*)view{
     if (videoFrame == nil || inferenceResult == nil) {
         return;
     }
@@ -547,9 +552,11 @@ int height = 0;
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        for (RTCMTLVideoView *view in [view_arr[index] subviews]) {
-                    [view renderFrame:videoFrame];
-                }
+        [view renderFrame:videoFrame];
+//
+//        for (RTCEAGLVideoView *video_view in [view subviews]) {
+//                    [video_view renderFrame:videoFrame];
+//                }
 //    for (int i=0;i<[view_arr count];i++){
 //        for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
 //            [view renderFrame:videoFrame];
