@@ -499,25 +499,51 @@ int call=0;
     size_t pixelBufferWidth = CVPixelBufferGetWidth(pixelBuffer); //480
     size_t pixelBufferHeight = CVPixelBufferGetHeight(pixelBuffer);//360
 
-    const int kBytesPerPixel = 1;
+    const int kBytesPerYPixel = 1;
+    const int kBytesPerUVPixel=1;
 
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    uint8_t *baseAddressPlane=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
-    size_t bytesPerRowPlane=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
-    for (int row=0; row<pixelBufferHeight; row++) {
-        uint8_t *pixel = baseAddressPlane+row*bytesPerRowPlane;
-        for (int column=0; column<pixelBufferWidth; column++) {
-            int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
-            int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
-            int index = row_index*segmentationWidth+column_index;
-            if (inferenceResult[index].shortValue == 0) {
-                pixel[0]=0;
+        CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+        uint8_t *baseAddressPlane_y=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
+        size_t bytesPerRowPlane_y=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+        uint8_t *baseAddressPlane_uv=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,1);
+        size_t bytesPerRowPlane_uv=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    
+        for (int row=0; row<pixelBufferHeight; row++) {
+            uint8_t *pixel_y = baseAddressPlane_y+row*bytesPerRowPlane_y;
+            uint8_t *pixel_uv = baseAddressPlane_uv+row/2*bytesPerRowPlane_uv;
+
+            for (int column=0; column<pixelBufferWidth; column++) {
+                int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
+                int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
+                int index = row_index*segmentationWidth+column_index;
+                if (inferenceResult[index].shortValue == 0) {
+                    pixel_y[0]=209;
+                    pixel_uv[0]=127;
+                    pixel_uv[1]=129;
+                }
+                pixel_y += kBytesPerYPixel;
+                pixel_uv+=kBytesPerUVPixel;
+
             }
-            pixel += kBytesPerPixel;
         }
-    }
+//        uint8_t *baseAddressPlane_uv=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,1);
+//        size_t bytesPerRowPlane_uv=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+//        for (int row=0; row<pixelBufferHeight; row++) {
+//            uint8_t *pixel_uv = baseAddressPlane_uv+row/2*bytesPerRowPlane_uv;
+//            for (int column=0; column<pixelBufferWidth; column++) {
+//                int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
+//                int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
+//                int index = row_index*segmentationWidth+column_index;
+//                if (inferenceResult[index].shortValue == 0) {
+//                    pixel_uv[0]=127;
+//                    pixel_uv[1]=129;
+//                }
+//                pixel_uv+=kBytesPerUVPixel;
+//            }
+//
+//            }
 
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     [self.local_view renderFrame:videoFrame];
 }
 
@@ -540,22 +566,48 @@ int call=0;
     RTCI420Buffer* buffer=(RTCI420Buffer*)videoFrame.buffer;
     int width=buffer.width; //640
     int height=buffer.height; //480
-    
-    const int kBytesPerPixel = 1;
+    int w=buffer.chromaWidth; //320
+    int h=buffer.chromaHeight; //240
+    int ysize=buffer.strideY; //640
+    int usize=buffer.strideU; //320
+    int vsize=buffer.strideV;//320
 
+    const int kBytesPerPixel_y = 1;
+    const int kBytesPerPixel_u = 2;
+    const int kBytesPerPixel_v = 2;
 
     for(int row=0; row<height;row++)
     {
         uint8_t *yLine=&buffer.dataY[row*buffer.strideY];
+
         for(int column=0;column<width;column++)
         {
             int column_index=column * (segmentationWidth / (double)width);
             int row_index= row * (segmentationHeight / (double)height);
             int index = row_index*segmentationWidth+column_index;
             if (inferenceResult[index].shortValue == 0) {
-                yLine[0]=0;
+                yLine[0]=209;
             }
-            yLine+=kBytesPerPixel;
+            yLine+=kBytesPerPixel_y;
+
+        }
+    }
+    for(int row=0; row<height;row++)
+    {
+        uint8_t *uLine=&buffer.dataU[row/2*buffer.strideU];
+        uint8_t *vLine=&buffer.dataV[row/2*buffer.strideV];
+
+        for(int column=0;column<width;column++)
+        {
+            int column_index=column * (segmentationWidth / (double)width);
+            int row_index= row * (segmentationHeight / (double)height);
+            int index = row_index*segmentationWidth+column_index;
+            if (inferenceResult[index].shortValue == 0) {
+                uLine[column/2]=127;
+                vLine[column/2]=129;
+            }
+            
+
         }
     }
     

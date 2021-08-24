@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
             uuid = "3A407CDC-CFD7-4EA1-878E-827D4B2A0A44"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             breakpointStackSelectionBehavior = "1"
@@ -36,7 +36,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "12BB8B9E-7469-42AA-AED2-EAD6C79DABDE"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Janus/ViewController.m"
@@ -74,9 +74,9 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "527"
-            endingLineNumber = "527"
-            landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
+            startingLineNumber = "553"
+            endingLineNumber = "553"
+            landmarkName = "-visionRequestDidComplete_remote:error:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -90,8 +90,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "539"
-            endingLineNumber = "539"
+            startingLineNumber = "565"
+            endingLineNumber = "565"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
             landmarkType = "7">
          </BreakpointContent>
@@ -131,48 +131,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C30E94CF-D8A9-46DC-A56E-332648C66456"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Janus/ViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "519"
-            endingLineNumber = "519"
-            landmarkName = "-renderLocalViewWithNewVideoFrame:inferenceResult:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "55BF7B93-2064-4D70-A651-ABB8A88132CC"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "546"
-            endingLineNumber = "546"
+            startingLineNumber = "577"
+            endingLineNumber = "577"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "56FF7A07-D153-4664-982B-292799594165"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Janus/ViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "508"
-            endingLineNumber = "508"
-            landmarkName = "-renderLocalViewWithNewVideoFrame:inferenceResult:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -260,7 +228,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E1BBFA2D-37DC-4ED5-B602-277D76746E8D"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Janus/ViewController.m"
@@ -268,8 +236,40 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "468"
             endingLineNumber = "468"
-            landmarkName = "ViewController"
-            landmarkType = "3">
+            landmarkName = "-myRemoteRenderer:renderFrame:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3643E20F-E3D2-4A7E-B520-DEF4BA3C0109"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Janus/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "527"
+            endingLineNumber = "527"
+            landmarkName = "-renderLocalViewWithNewVideoFrame:inferenceResult:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9BEAE65A-33FE-4179-B289-E3363F7E8F1E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Janus/ViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
+            landmarkName = "-renderLocalViewWithNewVideoFrame:inferenceResult:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
