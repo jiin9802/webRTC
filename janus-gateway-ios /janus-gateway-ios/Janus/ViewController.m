@@ -17,7 +17,7 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @interface ViewController () <RTCVideoCapturerDelegate>
 //@property (strong, nonatomic) RTCCameraPreviewView *localView;
 //rtccamerapreviewview->uiview
-@property (weak, nonatomic) IBOutlet RTCMTLVideoView *local_view;
+@property (weak, nonatomic) IBOutlet RTCEAGLVideoView *local_view;
 @property (weak, nonatomic) IBOutlet UIView *remoteView1;
 @property (weak, nonatomic) IBOutlet UIView *remoteView2;
 @property (weak, nonatomic) IBOutlet UIView *remoteView3;
@@ -27,14 +27,12 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 
 @implementation ViewController
 
-RTCEAGLVideoView *image_view;
 RTCCameraVideoCapturer * videoCapturer;
 WebSocketChannel *websocket;
 NSMutableDictionary *peerConnectionDict;
 NSMutableArray *peerConnectionArray;
 NSArray *resultArray;
 NSMutableArray *view_arr;
-//NSMutableArray *inferenceResult_remote;
 VNCoreMLModel *coremodel;
 VNCoreMLModel *coremodel_remote;
 DeepLabV3 *model;
@@ -53,13 +51,10 @@ RTCAudioTrack *localAudioTrack;
 
 int height = 0;
 int call=0;
-//NSMutableArray *arr;
 @synthesize factory = _factory;
-//@synthesize localView = _localView;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    image_view=[[RTCEAGLVideoView alloc]init];
     peerConnectionArray=[[NSMutableArray alloc] init];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
@@ -438,6 +433,8 @@ int call=0;
 #pragma mark - MyRemoteRendererDelegate
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame {
     //myRenderer가 토스해주는 frame을 받음.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     if(call%3!=0) {
         call++;
         return;
@@ -467,13 +464,16 @@ int call=0;
     NSLog(@"========myremoterenderer 호출됨");
     call++;
 
-    CVPixelBufferRelease(newBuffer);
+        CVPixelBufferRelease(newBuffer);
+    
+    });
 }
 
 #pragma mark - Handler
 - (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
 //    NSLog(@"========visionRequestDidComplete 호출됨");
-    inferenceResult = [[request.results[0] featureValue] multiArrayValue];
+   
+   inferenceResult = [[request.results[0] featureValue] multiArrayValue];
 
     //capturer thread  에서 실행하거나..
     //exception 된 이유:interferenceresult값 받아와서 써야 하는데 둘이 다른 thread라 값이 없을 때 요청하는 경우도 있어서
@@ -551,9 +551,10 @@ int call=0;
 
 - (void)visionRequestDidComplete_remote:(VNRequest *)request error:(NSError *)error {
     //NSLog(@"========visionRequestDidComplete 호출됨");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     
     inferenceResult_remote = [[request.results[0] featureValue] multiArrayValue];
-
+    });
 }
 - (void)renderRemoteViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame //rtci420buffer이용해서 pixelbuffer말고
                          inferenceResult:(MLMultiArray *)inferenceResult

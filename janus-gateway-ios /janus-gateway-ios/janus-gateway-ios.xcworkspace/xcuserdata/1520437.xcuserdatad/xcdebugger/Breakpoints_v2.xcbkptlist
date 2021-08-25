@@ -26,8 +26,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "426"
-            endingLineNumber = "426"
+            startingLineNumber = "421"
+            endingLineNumber = "421"
             landmarkName = "-capturer:didCaptureVideoFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,8 +42,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "440"
-            endingLineNumber = "440"
+            startingLineNumber = "435"
+            endingLineNumber = "435"
             landmarkName = "-myRemoteRenderer:renderFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,8 +74,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "556"
-            endingLineNumber = "556"
+            startingLineNumber = "557"
+            endingLineNumber = "557"
             landmarkName = "-visionRequestDidComplete_remote:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -90,8 +90,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "568"
-            endingLineNumber = "568"
+            startingLineNumber = "569"
+            endingLineNumber = "569"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,8 +106,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "430"
-            endingLineNumber = "430"
+            startingLineNumber = "425"
+            endingLineNumber = "425"
             landmarkName = "-capturer:didCaptureVideoFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,8 +122,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
             landmarkName = "-myRemoteRenderer:renderFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -138,8 +138,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "580"
-            endingLineNumber = "580"
+            startingLineNumber = "581"
+            endingLineNumber = "581"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
             landmarkType = "7">
          </BreakpointContent>
@@ -154,8 +154,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "283"
+            endingLineNumber = "283"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -170,8 +170,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "447"
-            endingLineNumber = "447"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
             landmarkName = "-myRemoteRenderer:renderFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -186,8 +186,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "461"
-            endingLineNumber = "461"
+            startingLineNumber = "458"
+            endingLineNumber = "458"
             landmarkName = "-myRemoteRenderer:renderFrame:"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,8 +202,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,8 +218,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "267"
+            endingLineNumber = "267"
             landmarkName = "-peerConnection:didAddStream:"
             landmarkType = "7">
          </BreakpointContent>
@@ -234,8 +234,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "470"
-            endingLineNumber = "470"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
             landmarkName = "-myRemoteRenderer:renderFrame:"
             landmarkType = "7">
          </BreakpointContent>
