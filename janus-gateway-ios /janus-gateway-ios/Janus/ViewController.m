@@ -551,6 +551,7 @@ int call=0;
 
 - (void)visionRequestDidComplete_remote:(VNRequest *)request error:(NSError *)error {
     //NSLog(@"========visionRequestDidComplete 호출됨");
+    
     inferenceResult_remote = [[request.results[0] featureValue] multiArrayValue];
 
 }
@@ -596,8 +597,8 @@ int call=0;
     }
     for(int row=0; row<chromaHeight;row++)
     {
-        uint8_t *uLine=(uint8_t *)buffer.dataU+row/2*chromaWidth;
-        uint8_t *vLine=(uint8_t *)buffer.dataV+row/2*chromaWidth;
+        uint8_t *uLine=(uint8_t *)buffer.dataU+row*chromaWidth;
+        uint8_t *vLine=(uint8_t *)buffer.dataV+row*chromaWidth;
 
         for(int column=0;column<chromaWidth;column++)
         {

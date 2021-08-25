@@ -74,8 +74,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "555"
-            endingLineNumber = "555"
+            startingLineNumber = "556"
+            endingLineNumber = "556"
             landmarkName = "-visionRequestDidComplete_remote:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -90,8 +90,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "567"
-            endingLineNumber = "567"
+            startingLineNumber = "568"
+            endingLineNumber = "568"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
             landmarkType = "7">
          </BreakpointContent>
@@ -138,8 +138,8 @@
             filePath = "Janus/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "579"
-            endingLineNumber = "579"
+            startingLineNumber = "580"
+            endingLineNumber = "580"
             landmarkName = "-renderRemoteViewWithNewVideoFrame:inferenceResult:view:"
             landmarkType = "7">
          </BreakpointContent>
