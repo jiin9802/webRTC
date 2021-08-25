@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina5_9" orientation="portrait" appearance="light"/>
+    <device id="retina5_9" orientation="landscape" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
@@ -16,47 +16,55 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="3VU-X0-ypH">
+                                <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z5v-DG-NcX" userLabel="View1" customClass="RTCMTLVideoView">
-                                <rect key="frame" x="0.0" y="0.0" width="187.66666666666666" height="406"/>
+                                <rect key="frame" x="43" y="110" width="104" height="145"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G2z-jo-h45" userLabel="View2">
-                                <rect key="frame" x="187.66666666666663" y="0.0" width="187.33333333333337" height="406"/>
+                                <rect key="frame" x="167" y="110" width="107" height="145"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LWb-J2-c1z" userLabel="View3">
-                                <rect key="frame" x="0.0" y="406" width="187.66666666666666" height="406"/>
+                                <rect key="frame" x="285" y="110" width="107" height="145"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAT-q5-j4q" userLabel="View4">
-                                <rect key="frame" x="187.66666666666663" y="406" width="187.33333333333337" height="406"/>
+                                <rect key="frame" x="410" y="110" width="108" height="145"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="G2z-jo-h45" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="3oV-s5-3xO"/>
-                            <constraint firstAttribute="trailing" secondItem="VAT-q5-j4q" secondAttribute="trailing" id="4C8-HF-EqN"/>
-                            <constraint firstItem="LWb-J2-c1z" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="FyM-ZV-bZY"/>
-                            <constraint firstItem="z5v-DG-NcX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="KbF-aY-Fom"/>
-                            <constraint firstAttribute="centerX" secondItem="z5v-DG-NcX" secondAttribute="trailing" id="MLr-Gk-zPh"/>
-                            <constraint firstAttribute="centerY" secondItem="LWb-J2-c1z" secondAttribute="top" id="OdM-6E-tIQ"/>
-                            <constraint firstItem="G2z-jo-h45" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Pf4-UO-heK"/>
-                            <constraint firstAttribute="centerY" secondItem="G2z-jo-h45" secondAttribute="bottom" id="f4f-yw-z1v"/>
-                            <constraint firstAttribute="centerX" secondItem="LWb-J2-c1z" secondAttribute="trailing" id="i9t-Mj-4Bw"/>
-                            <constraint firstItem="VAT-q5-j4q" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tES-Gy-31Q"/>
-                            <constraint firstItem="z5v-DG-NcX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tT1-LY-U3Z"/>
-                            <constraint firstAttribute="bottom" secondItem="VAT-q5-j4q" secondAttribute="bottom" id="uOH-vM-KHw"/>
-                            <constraint firstAttribute="centerY" secondItem="z5v-DG-NcX" secondAttribute="bottom" id="vRn-jy-4Lg"/>
-                            <constraint firstAttribute="trailing" secondItem="G2z-jo-h45" secondAttribute="trailing" id="yya-Ai-MNe"/>
-                            <constraint firstItem="VAT-q5-j4q" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="zeX-xZ-4au"/>
-                            <constraint firstAttribute="bottom" secondItem="LWb-J2-c1z" secondAttribute="bottom" id="zo1-BB-ISa"/>
+                            <constraint firstItem="G2z-jo-h45" firstAttribute="leading" secondItem="3VU-X0-ypH" secondAttribute="leading" constant="167" id="3oV-s5-3xO"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="trailing" secondItem="VAT-q5-j4q" secondAttribute="trailing" constant="294" id="4C8-HF-EqN"/>
+                            <constraint firstAttribute="trailing" secondItem="3VU-X0-ypH" secondAttribute="trailing" id="Ak5-8l-wGY"/>
+                            <constraint firstItem="LWb-J2-c1z" firstAttribute="leading" secondItem="3VU-X0-ypH" secondAttribute="leading" constant="285" id="FyM-ZV-bZY"/>
+                            <constraint firstItem="z5v-DG-NcX" firstAttribute="top" secondItem="3VU-X0-ypH" secondAttribute="top" constant="110" id="KbF-aY-Fom"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="trailing" secondItem="z5v-DG-NcX" secondAttribute="trailing" constant="665" id="MLr-Gk-zPh"/>
+                            <constraint firstItem="LWb-J2-c1z" firstAttribute="top" secondItem="3VU-X0-ypH" secondAttribute="top" constant="110" id="OdM-6E-tIQ"/>
+                            <constraint firstItem="G2z-jo-h45" firstAttribute="top" secondItem="3VU-X0-ypH" secondAttribute="top" constant="110" id="Pf4-UO-heK"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Pje-08-KeZ"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="bottom" secondItem="G2z-jo-h45" secondAttribute="bottom" constant="120" id="f4f-yw-z1v"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="hpt-nv-V0c"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="trailing" secondItem="LWb-J2-c1z" secondAttribute="trailing" constant="420" id="i9t-Mj-4Bw"/>
+                            <constraint firstAttribute="bottom" secondItem="3VU-X0-ypH" secondAttribute="bottom" id="mkU-qb-QLO"/>
+                            <constraint firstItem="VAT-q5-j4q" firstAttribute="leading" secondItem="3VU-X0-ypH" secondAttribute="leading" constant="410" id="tES-Gy-31Q"/>
+                            <constraint firstItem="z5v-DG-NcX" firstAttribute="leading" secondItem="3VU-X0-ypH" secondAttribute="leading" constant="43" id="tT1-LY-U3Z"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="bottom" secondItem="VAT-q5-j4q" secondAttribute="bottom" constant="120" id="uOH-vM-KHw"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="bottom" secondItem="z5v-DG-NcX" secondAttribute="bottom" constant="120" id="vRn-jy-4Lg"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="trailing" secondItem="G2z-jo-h45" secondAttribute="trailing" constant="538" id="yya-Ai-MNe"/>
+                            <constraint firstItem="VAT-q5-j4q" firstAttribute="top" secondItem="3VU-X0-ypH" secondAttribute="top" constant="110" id="zeX-xZ-4au"/>
+                            <constraint firstItem="3VU-X0-ypH" firstAttribute="bottom" secondItem="LWb-J2-c1z" secondAttribute="bottom" constant="120" id="zo1-BB-ISa"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="background" destination="3VU-X0-ypH" id="Zfv-8Y-UTY"/>
                         <outlet property="local_view" destination="z5v-DG-NcX" id="onA-t9-V4P"/>
                         <outlet property="remoteView1" destination="G2z-jo-h45" id="l33-ha-M27"/>
                         <outlet property="remoteView2" destination="LWb-J2-c1z" id="sWT-FT-fTK"/>
@@ -68,4 +76,7 @@
             <point key="canvasLocation" x="29.600000000000001" y="75.369458128078819"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="background" width="1624" height="760"/>
+    </resources>
 </document>

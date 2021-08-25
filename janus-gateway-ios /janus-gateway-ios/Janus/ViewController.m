@@ -7,6 +7,8 @@
 #import <Vision/Vision.h>
 #import <CoreML/CoreML.h>
 #import "DeepLabV3.h"
+#import <UIKit/UIKit.h>
+
 //#include "libyuv.h"
 static NSString * const kARDMediaStreamId = @"ARDAMS";
 static NSString * const kARDAudioTrackId = @"ARDAMSa0";
@@ -19,6 +21,7 @@ static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 @property (weak, nonatomic) IBOutlet UIView *remoteView1;
 @property (weak, nonatomic) IBOutlet UIView *remoteView2;
 @property (weak, nonatomic) IBOutlet UIView *remoteView3;
+@property (weak, nonatomic) IBOutlet UIImageView *background;
 
 @end
 
@@ -57,7 +60,6 @@ int call=0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     image_view=[[RTCEAGLVideoView alloc]init];
-
     peerConnectionArray=[[NSMutableArray alloc] init];
 
     view_arr=[NSMutableArray arrayWithCapacity:3];
@@ -564,49 +566,50 @@ int call=0;
     int segmentationHeight = [inferenceResult.shape[1] intValue];
     
     RTCI420Buffer* buffer=(RTCI420Buffer*)videoFrame.buffer;
-    int width=buffer.width; //640
-    int height=buffer.height; //480
-    int w=buffer.chromaWidth; //320
-    int h=buffer.chromaHeight; //240
+    int luminaceWidth=buffer.width; //640
+    int luminanceHeight=buffer.height; //480
+    int chromaWidth=buffer.chromaWidth; //320
+    int chromaHeight=buffer.chromaHeight; //240
     int ysize=buffer.strideY; //640
     int usize=buffer.strideU; //320
     int vsize=buffer.strideV;//320
 
-    const int kBytesPerPixel_y = 1;
-    const int kBytesPerPixel_u = 2;
-    const int kBytesPerPixel_v = 2;
+    const int kBytesPerPixelY = 1;
+    const int kBytesPerPixelU = 1;
+    const int kBytesPerPixelV = 1;
 
-    for(int row=0; row<height;row++)
+    for(int row=0; row<luminanceHeight;row++)
     {
         uint8_t *yLine=&buffer.dataY[row*buffer.strideY];
 
-        for(int column=0;column<width;column++)
+        for(int column=0;column<luminaceWidth;column++)
         {
-            int column_index=column * (segmentationWidth / (double)width);
-            int row_index= row * (segmentationHeight / (double)height);
+            int column_index=column * (segmentationWidth / (double)luminaceWidth);
+            int row_index= row * (segmentationHeight / (double)luminanceHeight);
             int index = row_index*segmentationWidth+column_index;
             if (inferenceResult[index].shortValue == 0) {
                 yLine[0]=209;
             }
-            yLine+=kBytesPerPixel_y;
+            yLine+=kBytesPerPixelY;
 
         }
     }
-    for(int row=0; row<height;row++)
+    for(int row=0; row<chromaHeight;row++)
     {
-        uint8_t *uLine=&buffer.dataU[row/2*buffer.strideU];
-        uint8_t *vLine=&buffer.dataV[row/2*buffer.strideV];
+        uint8_t *uLine=(uint8_t *)buffer.dataU+row/2*chromaWidth;
+        uint8_t *vLine=(uint8_t *)buffer.dataV+row/2*chromaWidth;
 
-        for(int column=0;column<width;column++)
+        for(int column=0;column<chromaWidth;column++)
         {
-            int column_index=column * (segmentationWidth / (double)width);
-            int row_index= row * (segmentationHeight / (double)height);
+            int column_index=column * (segmentationWidth / (double)chromaWidth);
+            int row_index= row * (segmentationHeight / (double)chromaHeight);
             int index = row_index*segmentationWidth+column_index;
             if (inferenceResult[index].shortValue == 0) {
-                uLine[column/2]=127;
-                vLine[column/2]=129;
+                uLine[0]=127;
+                vLine[0]=129;
             }
-            
+            uLine+=kBytesPerPixelU;
+            vLine+=kBytesPerPixelV;
 
         }
     }
