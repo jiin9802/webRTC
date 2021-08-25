@@ -461,7 +461,7 @@ int call=0;
     [self renderRemoteViewWithNewVideoFrame:frame
                            inferenceResult:renderer.inferenceResult
                                  view:renderer.remoteView];
-    NSLog(@"========myremoterenderer 호출됨");
+//    NSLog(@"========myremoterenderer 호출됨");
     call++;
 
         CVPixelBufferRelease(newBuffer);

@@ -20,7 +20,14 @@
     // Override point for customization after application launch.
     RTCInitializeSSL();
     RTCSetupInternalTracer();
-    RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
+//    RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
+    
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(status == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        }];
+    }
+    
     return YES;
 }
 
