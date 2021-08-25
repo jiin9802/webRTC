@@ -16,8 +16,6 @@
 
 @property(nonatomic, strong) RTCPeerConnectionFactory *factory;
 
-- (void)renderFrame:(RTCVideoFrame*)frame;
-
 @end
 
 

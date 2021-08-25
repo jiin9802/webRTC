@@ -15,8 +15,7 @@ static NSString * const kARDAudioTrackId = @"ARDAMSa0";
 static NSString * const kARDVideoTrackId = @"ARDAMSv0";
 
 @interface ViewController () <RTCVideoCapturerDelegate>
-//@property (strong, nonatomic) RTCCameraPreviewView *localView;
-//rtccamerapreviewview->uiview
+
 @property (weak, nonatomic) IBOutlet RTCEAGLVideoView *local_view;
 @property (weak, nonatomic) IBOutlet UIView *remoteView1;
 @property (weak, nonatomic) IBOutlet UIView *remoteView2;
@@ -99,16 +98,14 @@ int call=0;
     localTrack = [self createLocalVideoTrack];
     localAudioTrack = [self createLocalAudioTrack];
 }
--(void)arrangeRemoteView{
+
+- (void)arrangeRemoteView{
     NSInteger i=0;
     
     for(JanusConnection *peerConnection in peerConnectionArray)
     {
         if(i>=[view_arr count]) //3개의 뷰만 constraint로 표현될 수 있게 peerconnectionarray에 있는 다른 것들은 표시 안되게, for(view_arr수만큼)대신한 문장
-        {
             break;
-        }
-        
         
         RTCEAGLVideoView *remote_View =peerConnection.videoView;
         [view_arr[i] addSubview:remote_View];
@@ -125,14 +122,13 @@ int call=0;
         
     }
 }
+
 - (RTCEAGLVideoView *)createRemoteView {
     RTCEAGLVideoView *remoteView = [[RTCEAGLVideoView alloc] init];
-    //remoteView.contentMode=UIViewContentModeScaleAspectFill;
-    //[remoteView renderFrame:nil];
     remoteView.delegate = self;
-
     return remoteView;
 }
+
 - (void)createPublisherPeerConnection {
     publisherPeerConnection = [self createPeerConnection];
     [self createAudioSender:publisherPeerConnection];
@@ -181,10 +177,8 @@ int call=0;
 }
 
 - (RTCMediaConstraints *)defaultMediaAudioConstraints {
-//    NSDictionary *mandatoryConstraints = @{ kRTCMediaConstraintsLevelControl : kRTCMediaConstraintsValueFalse };
-    RTCMediaConstraints *constraints =
-    [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil/*mandatoryConstraints*/
-                                          optionalConstraints:nil];
+    RTCMediaConstraints *constraints =[[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil/*mandatoryConstraints*/
+                                                                            optionalConstraints:nil];
     return constraints;
 }
 
@@ -206,6 +200,7 @@ int call=0;
 
     return track;
 }
+
 //RTCCameraVideoCapturer
 
 - (RTCRtpSender *)createAudioSender:(RTCPeerConnection *)peerConnection {
@@ -255,16 +250,9 @@ int call=0;
         if (stream.videoTracks.count) {
             RTCVideoTrack *remoteVideoTrack = stream.videoTracks[0];
             RTCEAGLVideoView *remoteView=[self createRemoteView];
-//            [remoteVideoTrack addRenderer:remoteView];
             MyRemoteRenderer *remoteRenderer = [[MyRemoteRenderer alloc] initWithDelegate:self];
             remoteRenderer.remoteView=remoteView;
-//            if(coremodel_remote){
-//                coreMLRequest_remote = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote];
-//                coreMLRequest_remote.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
-//                remoteRenderer.coreMLRequest=coreMLRequest_remote;
-//
-//                }
-            
+
             if(coremodel_remote){
                 remoteRenderer.coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote
                                                      completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
@@ -284,12 +272,7 @@ int call=0;
             //janusConnection.videoView.contentMode=UIViewContentModeScaleAspectFit;
         }
     });
-//    for(NSInteger i=0; i<[view count];i++){
-//        NSLog(@"===========objectatIndex view[%ld]=[%ld]",(long)i,(long)[view[i] integerValue]);
-//        //NSLog(@"type:",[view[i] class]);
-//    }
 }
-
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didRemoveStream:(RTCMediaStream *)stream {
     NSLog(@"=========didRemoveStream");
@@ -336,7 +319,6 @@ int call=0;
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didRemoveIceCandidates:(NSArray<RTCIceCandidate *> *)candidates {
     NSLog(@"=========didRemoveIceCandidates");
 }
-
 
 // mark: delegate
 
@@ -424,7 +406,7 @@ int call=0;
         [img_handler performRequests:@[coreMLRequest] error:nil];
 
     }
-//    [self.local_view renderFrame:frame];
+
     [self renderLocalViewWithNewVideoFrame:frame
                            inferenceResult:inferenceResult];
    // NSLog(@"========didcapturevideoframe 호출됨");
@@ -440,7 +422,7 @@ int call=0;
         return;
         
     }
-    CVPixelBufferRef newBuffer;
+    CVPixelBufferRef newBuffer = NULL;
     size_t width=frame.buffer.width; //640
     size_t height=frame.buffer.height; //480
     RTCI420Buffer* buffer=(RTCI420Buffer*)frame.buffer;
@@ -464,7 +446,7 @@ int call=0;
 //    NSLog(@"========myremoterenderer 호출됨");
     call++;
 
-        CVPixelBufferRelease(newBuffer);
+    CVPixelBufferRelease(newBuffer);
     
     });
 }
@@ -472,19 +454,7 @@ int call=0;
 #pragma mark - Handler
 - (void)visionRequestDidComplete:(VNRequest *)request error:(NSError *)error {
 //    NSLog(@"========visionRequestDidComplete 호출됨");
-   
    inferenceResult = [[request.results[0] featureValue] multiArrayValue];
-
-    //capturer thread  에서 실행하거나..
-    //exception 된 이유:interferenceresult값 받아와서 써야 하는데 둘이 다른 thread라 값이 없을 때 요청하는 경우도 있어서
-    //해결: coreML이 자동으로 동기화 해줘서 main th async 하지 않으면 같은 thread에서 안전하게 동작 잘 한다.
-//    dispatch_async(dispatch_get_main_queue(), ^{//작업을 블락시키지 않고 메인스레드에서 실행시킨다.
-//
-//        // 513 x 513 pixelBuffer를 생성
-//        // pixelBuffer에 mlMultiArray의 값으로 흰색 / 검은색을 구분하여 채웁니다.
-//        // pixelBuffer를 RTCVideoFrame으로 만듭니다.
-//        // local_view에 renderFrame으로 rendering해줍니다.
-//    });
 }
 
 - (void)renderLocalViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame
@@ -504,58 +474,44 @@ int call=0;
     const int kBytesPerYPixel = 1;
     const int kBytesPerUVPixel=1;
 
-        CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-        uint8_t *baseAddressPlane_y=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
-        size_t bytesPerRowPlane_y=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
-        uint8_t *baseAddressPlane_uv=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,1);
-        size_t bytesPerRowPlane_uv=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     
-        for (int row=0; row<pixelBufferHeight; row++) {
-            uint8_t *pixel_y = baseAddressPlane_y+row*bytesPerRowPlane_y;
-            uint8_t *pixel_uv = baseAddressPlane_uv+row/2*bytesPerRowPlane_uv;
+    uint8_t *baseAddressPlane_y=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,0);
+    size_t bytesPerRowPlane_y=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    uint8_t *baseAddressPlane_uv=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,1);
+    size_t bytesPerRowPlane_uv=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
 
-            for (int column=0; column<pixelBufferWidth; column++) {
-                int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
-                int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
-                int index = row_index*segmentationWidth+column_index;
-                if (inferenceResult[index].shortValue == 0) {
-                    pixel_y[0]=209;
-                    pixel_uv[0]=127;
-                    pixel_uv[1]=129;
-                }
-                pixel_y += kBytesPerYPixel;
-                pixel_uv+=kBytesPerUVPixel;
+    for (int row=0; row<pixelBufferHeight; row++) {
+        uint8_t *pixel_y = baseAddressPlane_y+row*bytesPerRowPlane_y;
+        uint8_t *pixel_uv = baseAddressPlane_uv+row/2*bytesPerRowPlane_uv;
 
+        for (int column=0; column<pixelBufferWidth; column++) {
+            int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
+            int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
+            int index = row_index*segmentationWidth+column_index;
+            if (inferenceResult[index].shortValue == 0) {
+                pixel_y[0]=209;
+                pixel_uv[0]=127;
+                pixel_uv[1]=129;
             }
-        }
-//        uint8_t *baseAddressPlane_uv=CVPixelBufferGetBaseAddressOfPlane(pixelBuffer,1);
-//        size_t bytesPerRowPlane_uv=CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
-//        for (int row=0; row<pixelBufferHeight; row++) {
-//            uint8_t *pixel_uv = baseAddressPlane_uv+row/2*bytesPerRowPlane_uv;
-//            for (int column=0; column<pixelBufferWidth; column++) {
-//                int column_index=column * (segmentationWidth / (double)pixelBufferWidth);
-//                int row_index= row * (segmentationHeight / (double)pixelBufferHeight);
-//                int index = row_index*segmentationWidth+column_index;
-//                if (inferenceResult[index].shortValue == 0) {
-//                    pixel_uv[0]=127;
-//                    pixel_uv[1]=129;
-//                }
-//                pixel_uv+=kBytesPerUVPixel;
-//            }
-//
-//            }
+            pixel_y += kBytesPerYPixel;
+            pixel_uv+=kBytesPerUVPixel;
 
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+        }
+    }
+
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     [self.local_view renderFrame:videoFrame];
 }
 
 - (void)visionRequestDidComplete_remote:(VNRequest *)request error:(NSError *)error {
     //NSLog(@"========visionRequestDidComplete 호출됨");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     
-    inferenceResult_remote = [[request.results[0] featureValue] multiArrayValue];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        inferenceResult_remote = [[request.results[0] featureValue] multiArrayValue];
     });
 }
+
 - (void)renderRemoteViewWithNewVideoFrame:(RTCVideoFrame *)videoFrame //rtci420buffer이용해서 pixelbuffer말고
                          inferenceResult:(MLMultiArray *)inferenceResult
                                view:(RTCEAGLVideoView*)view{
@@ -572,9 +528,6 @@ int call=0;
     int luminanceHeight=buffer.height; //480
     int chromaWidth=buffer.chromaWidth; //320
     int chromaHeight=buffer.chromaHeight; //240
-    int ysize=buffer.strideY; //640
-    int usize=buffer.strideU; //320
-    int vsize=buffer.strideV;//320
 
     const int kBytesPerPixelY = 1;
     const int kBytesPerPixelU = 1;
@@ -616,67 +569,7 @@ int call=0;
         }
     }
     
-  //  dispatch_async(dispatch_get_main_queue(), ^{
-        [view renderFrame:videoFrame];
-//
-//        for (RTCEAGLVideoView *video_view in [view subviews]) {
-//                    [video_view renderFrame:videoFrame];
-//                }
-//    for (int i=0;i<[view_arr count];i++){
-//        for (RTCMTLVideoView *view in [view_arr[i] subviews]) {
-//            [view renderFrame:videoFrame];
-//        }
-//    }
- //   });
-}
-- (nonnull CVImageBufferRef)createPixelBufferWithSize:(CGSize)size {
-    CVPixelBufferRef pixelBuffer = NULL;
-    static size_t const attributes_size = 3;
-    CFTypeRef attributesKeys[attributes_size] = {
-        kCVPixelBufferMetalCompatibilityKey,
-        kCVPixelBufferIOSurfacePropertiesKey,
-        kCVPixelBufferPixelFormatTypeKey
-    };
-    
-    CFDictionaryRef io_surface_value = CFDictionaryCreate(NULL,
-                                                          NULL, NULL, 0,
-                                                          &kCFTypeDictionaryKeyCallBacks,
-                                                          &kCFTypeDictionaryValueCallBacks);
-    
-    int64_t nv12type = kCVPixelFormatType_32BGRA;
-    CFNumberRef pixel_format = CFNumberCreate(NULL, kCFNumberLongType, &nv12type);
-    CFTypeRef values[attributes_size] = {kCFBooleanTrue, io_surface_value, pixel_format};
-    CFDictionaryRef attributes = CFDictionaryCreate(NULL,
-                                                    attributesKeys, values, attributes_size,
-                                                    &kCFTypeDictionaryKeyCallBacks,
-                                                    &kCFTypeDictionaryValueCallBacks);
-    if (io_surface_value) {
-        CFRelease(io_surface_value);
-        io_surface_value = NULL;
-    }
-    if (pixel_format) {
-        CFRelease(pixel_format);
-        pixel_format = NULL;
-    }
-    
-    CVReturn returnValue = CVPixelBufferCreate(kCFAllocatorDefault,
-                                               (size_t)(size.width),
-                                               (size_t)(size.height),
-                                               kCVPixelFormatType_32BGRA,
-                                               attributes,
-                                               &pixelBuffer);
-    CFRelease(attributes);
-    if(returnValue != kCVReturnSuccess) {
-        return nil;
-    }
-    
-    CVPixelBufferLockFlags unlockFlags = kNilOptions;
-    CVPixelBufferLockBaseAddress(pixelBuffer, unlockFlags);
-    uint8_t *baseAddress = (unsigned char *)(CVPixelBufferGetBaseAddress(pixelBuffer));
-    memset(baseAddress, 0xFF, size.width * size.height * 4);
-
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    return pixelBuffer;
+    [view renderFrame:videoFrame];
 }
 
 @end
