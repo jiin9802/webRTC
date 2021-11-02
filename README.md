@@ -14,8 +14,8 @@ janus server로부터 받아온 사용자들의 영상을 ML모델을 이용하�
 회의 참여자들이 마치 한 공간에 있는 듯한 느낌을 주고 더욱 몰입할 수 있는 기능을 제공한다.
 
 ### DEMO
-<img src="![Hnet-image (3)](https://user-images.githubusercontent.com/51341750/139804342-bc7510ea-aa4b-47d4-94bc-c189e2af6e34.gif)
-">
+![Hnet-image (3)](https://user-images.githubusercontent.com/51341750/139804342-bc7510ea-aa4b-47d4-94bc-c189e2af6e34.gif)
+
 
 ### 개선할 점
 * 속도 개선
