@@ -14,11 +14,11 @@ The COVID-19 pandemic has been pushing more and more people in meeting online an
 
 ## Architecture
 
-# [ViewController](https://github.com/jiin9802/webRTC/blob/master/janus-gateway-ios%20/janus-gateway-ios/Janus/ViewController.m)
+### [ViewController](https://github.com/jiin9802/webRTC/blob/master/janus-gateway-ios%20/janus-gateway-ios/Janus/ViewController.m)
 ViewController is related to rendering views and control users' enter&exit.
 Also, image processing function.
 
-# [MyRemoteRenderer](https://github.com/jiin9802/webRTC/blob/master/janus-gateway-ios%20/janus-gateway-ios/Janus/MyRemoteRenderer.m)
+### [MyRemoteRenderer](https://github.com/jiin9802/webRTC/blob/master/janus-gateway-ios%20/janus-gateway-ios/Janus/MyRemoteRenderer.m)
 MyRemoteRenderer is a function to receive images, process them, and render them directly to the view. 
 
 ## Improving performance
