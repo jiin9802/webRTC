@@ -22,10 +22,7 @@
     [_delegate myRemoteRenderer:self
                     renderFrame:frame];
 }
-//-(void)coreMLRequest:(
 
-- (void)setSize:(CGSize)size {
-    
-}
+
 
 @end
