@@ -18,13 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MyRemoteRendererDelegate
 
 - (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame;
-//- (void)myRemoteRenderer:(MyRemoteRenderer *)renderer renderFrame:(RTCVideoFrame*)frame request:(VNCoreRequest*)request;
 
-//@protocol MyRequest
-//-(void)makeMyRequest:(VNCoreMLModel*)model;
 @end
-
-//@interface VNCoreMLRequest : reque
 
 @interface MyRemoteRenderer : NSObject<RTCVideoRenderer>
 
