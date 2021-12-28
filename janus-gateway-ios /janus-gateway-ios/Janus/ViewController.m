@@ -257,19 +257,15 @@ int call=0;
                 remoteRenderer.coreMLRequest = [[VNCoreMLRequest alloc] initWithModel:coremodel_remote
                                                      completionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
                     remoteRenderer.inferenceResult = [[remoteRenderer.coreMLRequest.results[0] featureValue] multiArrayValue];
-
-                    //[self visionRequestDidComplete_remote:remoteRenderer.coreMLRequest error:error];
                     remoteRenderer.coreMLRequest.imageCropAndScaleOption=VNImageCropAndScaleOptionScaleFill;
                 }];
             }
-            //test=coreMLRequest_remote;
-            //remoteRenderer.coreMLRequest=coreMLRequest_remote;
+            
             [remoteVideoTrack addRenderer:remoteRenderer];
             janusConnection.videoTrack = remoteVideoTrack;
             janusConnection.videoView=remoteView;
             [peerConnectionArray addObject:janusConnection];
             [self arrangeRemoteView];
-            //janusConnection.videoView.contentMode=UIViewContentModeScaleAspectFit;
         }
     });
 }
